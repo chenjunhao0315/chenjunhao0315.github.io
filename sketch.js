@@ -48,8 +48,12 @@ function draw() {
     aquarium.showItem();
     aquarium.updatePopulation();
     aquarium.showPopulation();
+    aquarium.updateQlist();
     
     preminute = minute();
+
+
+    document.getElementById("temp").innerHTML = aquarium.weather.temp;
     /*noFill();
     stroke(0, 200, 0);
     strokeWeight(1);

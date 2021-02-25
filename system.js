@@ -8,6 +8,16 @@ class System {
         this.property = new Property();
     }
 
+    updateQlist() {
+        for (let pop of this.population) {
+            pop.sort_qlist();
+        }
+
+        for (let it of this.item) {
+            it.sort_qlist();
+        }
+    }
+
     background() {
         if (this.weather.temp == null) {
             background(this.property.colour[0]);
@@ -389,6 +399,7 @@ class population {
         this.boundary = new Rectangle(width / 2, height / 2, width, height);
         this.list = [];
         this.qlist = new QuadTree(this.boundary, 4);
+        this.deletelist = [];
     }
     
     show() {
@@ -398,6 +409,12 @@ class population {
     }
     
     sort_qlist() {
+        let list = sort(this.deletelist, this.deletelist.length);
+
+        for (let i = this.deletelist.length - 1; i >= 0; i--) {
+            this.list.splice(list[i], 1);
+        }
+        this.deletelist = [];
         this.qlist.clear();
         for (let i = 0; i < this.list.length; i++) {
             this.qlist.addItem(this.list[i].pos.x, this.list[i].pos.y, this.list[i], i);
@@ -429,12 +446,13 @@ class population {
             }
             this.list.push(new fish(x, y, r, this.carrer, dna));
         }
-        this.sort_qlist();
+        //this.sort_qlist();
     }
     
     killAnimal(index) {
-        this.list.splice(index, 1);
-        this.sort_qlist();
+        this.deletelist.push(index);
+        //this.list.splice(index, 1);
+        //this.sort_qlist();
     }
 }
 
@@ -522,6 +540,7 @@ class stuff {
         this.list = [];
         this.qlist = new QuadTree(this.boundary, 4);
         this.canMove = canMove || false;
+        this.deletelist = [];
     }
     
     show() {
@@ -533,8 +552,9 @@ class stuff {
     }
     
     deleteItem(index) {
-        this.list.splice(index, 1);
-        this.sort_qlist();
+        this.deletelist.push(index);
+        //this.list.splice(index, 1);
+        //this.sort_qlist();
     }
     
     addItem(num, xx, yy) {
@@ -554,10 +574,16 @@ class stuff {
             }
             this.list.push(new Entity(x, y));
         }
-        this.sort_qlist();
+        //this.sort_qlist();
     }
     
     sort_qlist() {
+        let list = sort(this.deletelist, this.deletelist.length);
+
+        for (let i = this.deletelist.length - 1; i >= 0; i--) {
+            this.list.splice(list[i], 1);
+        }
+        this.deletelist = [];
         this.qlist.clear();
         for (let i = 0; i < this.list.length; i++) {
             this.qlist.addItem(this.list[i].pos.x, this.list[i].pos.y, this.list[i], i);
@@ -584,8 +610,6 @@ class flow_field {
     }
 
     angle(angle, mag) {
-        //console.log(angle);
-        //print(angle);
         for (let i = 0; i < this.cols; i++) {
             for (let j = 0; j < this.rows; j++) {
                 this.field[i + j * this.cols] = new Vector.fromAngle((angle + 90) / 180 * Math.PI);
