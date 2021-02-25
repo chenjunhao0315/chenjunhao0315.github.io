@@ -52,8 +52,6 @@ function draw() {
     
     preminute = minute();
 
-
-    document.getElementById("temp").innerHTML = aquarium.weather.temp;
     /*noFill();
     stroke(0, 200, 0);
     strokeWeight(1);
