@@ -2,10 +2,55 @@ class System {
     constructor(System_name) {
         this.name = System_name;
         this.population = [];
+        this.plant = [];
         this.item = [];
         this.field = [];
         this.weather = new Weather();
         this.property = new Property();
+    }
+
+    updatePlant(plant_name) {
+        if (plant_name === undefined) {
+            for (let plant of this.plant) {
+                plant.update(this);
+            }
+        } else {
+            let index = null;
+            
+            for (let i = 0; i < this.plant.length; i++) {
+                if (this.plant[i].name == plant_name) {
+                    plant = i;
+                }
+            }
+            
+            if (index != null) {
+                this.plant[index].update(this);
+            }
+        }
+    }
+
+    showPlant(plant_name) {
+        if (plant_name === undefined) {
+            for (let plant of this.plant) {
+                plant.show();
+            }
+        } else {
+            let index = null;
+            
+            for (let i = 0; i < this.plant.length; i++) {
+                if (this.plant[i].name == plant_name) {
+                    plant = i;
+                }
+            }
+            
+            if (index != null) {
+                this.plant[index].show();
+            }
+        }
+    }
+
+    addPlant(plant_name, species) {
+        this.plant.push(new Plant(plant_name, species));
     }
 
     updateQlist() {
@@ -44,92 +89,6 @@ class System {
         this.weather.update(weather);
         this.angleField('WIND', aquarium.weather.wdir, aquarium.weather.wdsd);
         this.randomField('WATER', aquarium.weather.wdsd / 2);
-    }
-
-    updateField(field_name, object_name) {
-        if (field_name === undefined) {
-            for (let field of this.field) {
-                //console.log(field);
-                if (object_name === undefined) {
-                    for (let object_list of this.item) {
-                        for (let object of object_list.list) {
-                            object.edges();
-                            object.follow(field);
-                            if (this.weather.wdsd != null) {
-                                object.update(this.weather.wdsd / 10);
-                            } else {
-                                object.update();
-                            }
-                            
-                        }
-                    }
-                } else {
-                    let index_o = null;
-
-                    for (let i = 0; i < this.item.length; i++) {
-                        if (this.item[i].name == object_name) {
-                            index_o = i;
-                        }
-                    }
-
-                    if (index_o != null) {
-                        for (let object of this.item[index_o].list) {
-                            object.edges();
-                            object.follow(field);
-                            if (this.weather.wdsd != null) {
-                                object.update(this.weather.wdsd / 10);
-                            } else {
-                                object.update();
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            let index = null;
-            
-            for (let i = 0; i < this.field.length; i++) {
-                if (this.field[i].name == field_name) {
-                    index = i;
-                }
-            }
-            
-            if (index != null) {
-                if (object_name === undefined) {
-                    for (let object_list of this.item) {
-                        for (let object of object_list.list) {
-                            object.edges();
-                            object.follow(this.field[index]);
-                            if (this.weather.wdsd != null) {
-                                object.update(this.weather.wdsd / 10);
-                            } else {
-                                object.update();
-                            }
-                        }
-                    }
-                } else {
-                    let index_o = null;
-
-                    for (let i = 0; i < this.item.length; i++) {
-                        if (this.item[i].name == object_name) {
-                            index_o = i;
-                        }
-                    }
-
-                    if (index_o != null) {
-                        for (let object of this.item[index_o].list) {
-                            object.edges();
-                            object.follow(this.field[index]);
-                            if (this.weather.wdsd != null) {
-                                object.update(this.weather.wdsd / 10);
-                            } else {
-                                object.update();
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     angleField(field_name, angle, mag = 1) {
@@ -205,6 +164,59 @@ class System {
         }
         return null;
     }
+
+    updateItem(field_name, object_name) {
+        if (field_name === undefined) {
+            for (let field of this.field) {
+                //console.log(field);
+                if (object_name === undefined) {
+                    for (let object_list of this.item) {
+                        object_list.update(this, field);
+                    }
+                } else {
+                    let index_o = null;
+
+                    for (let i = 0; i < this.item.length; i++) {
+                        if (this.item[i].name == object_name) {
+                            index_o = i;
+                        }
+                    }
+
+                    if (index_o != null) {
+                        this.item[index_o].update(this, field);
+                    }
+                }
+            }
+        } else {
+            let index = null;
+            
+            for (let i = 0; i < this.field.length; i++) {
+                if (this.field[i].name == field_name) {
+                    index = i;
+                }
+            }
+            
+            if (index != null) {
+                if (object_name === undefined) {
+                    for (let object_list of this.item) {
+                        object_list.update(this, this.field[index]);
+                    }
+                } else {
+                    let index_o = null;
+
+                    for (let i = 0; i < this.item.length; i++) {
+                        if (this.item[i].name == object_name) {
+                            index_o = i;
+                        }
+                    }
+
+                    if (index_o != null) {
+                        this.item[index_o].update(this, this.field[index]);
+                    }
+                }
+            }
+        }
+    }
     
     showItem(item_name) {
         if (item_name === undefined) {
@@ -261,18 +273,7 @@ class System {
     updatePopulation(population_name) {
         if (population_name === undefined) {
             for (let pop of this.population) {
-                for (let i = 0; i < pop.list.length; i++) {
-                    pop.list[i].boundaries();
-                    pop.list[i].applyFlock(pop.qlist);
-                    pop.list[i].behavior(this);
-                    pop.list[i].update();
-                    if (pop.list[i].isDead()) {
-                        if (pop.list[i].radius > 10) {
-                            this.addStuff('BODY', 1, pop.list[i].pos.x, pop.list[i].pos.y);
-                        }
-                        this.killAnimal(pop.name, i);
-                    }
-                }
+                pop.update(this);
             }
         } else {
             let index = null;
@@ -284,15 +285,7 @@ class System {
             }
             
             if (index != null) {
-                for (let i = 0; i < this.population[index].list.length; i++) {
-                    this.population[index].list[i].boundaries();
-                    this.population[index].list[i].applyFlock(this.population[index].qlist);
-                    this.population[index].list[i].behavior(this.item[0].qlist, this.item[1].qlist);
-                    this.population[index].list[i].update();
-                    if (this.population[index].list[i].isDead()) {
-                        this.killAnimal(population_name, i);
-                    }
-                }
+                this.population[index].update(this);
             }
         }
 
@@ -400,6 +393,21 @@ class population {
         this.list = [];
         this.qlist = new QuadTree(this.boundary, 4);
         this.deletelist = [];
+    }
+
+    update(system) {
+        for (let i = 0; i < this.list.length; i++) {
+            this.list[i].boundaries();
+            this.list[i].applyFlock(this.qlist);
+            this.list[i].behavior(system);
+            this.list[i].update();
+            if (this.list[i].isDead()) {
+                if (this.list[i].radius > 10) {
+                    system.addStuff('BODY', 1, this.list[i].pos.x, this.list[i].pos.y);
+                }
+                system.killAnimal(this.name, i);
+            }
+        }
     }
     
     show() {
@@ -535,19 +543,34 @@ class stuff {
     constructor(name, colour, radius, canMove) {
         this.name = name;
         this.colour = colour;
-        this.radius = radius || 2;
+        this.radius = radius || 1;
         this.boundary = new Rectangle(width / 2, height / 2, width, height);
         this.list = [];
         this.qlist = new QuadTree(this.boundary, 4);
         this.canMove = canMove || false;
         this.deletelist = [];
     }
+
+    update(system, field) {
+        for (let object of this.list) {
+            object.edges();
+            if (this.canMove) {
+                object.follow(field);
+            }
+            if (system.weather.wdsd != null) {
+                object.update(system.weather.wdsd / 10);
+            } else {
+                object.update();
+            }
+                            
+        }
+    }
     
     show() {
         for (let s of this.list) {
             fill(this.colour);
             noStroke();
-            ellipse(s.pos.x, s.pos.y, this.radius, this.radius);
+            ellipse(s.pos.x, s.pos.y, this.radius * 2, this.radius * 2);
         }
     }
     
@@ -615,6 +638,79 @@ class flow_field {
                 this.field[i + j * this.cols] = new Vector.fromAngle((angle + 90) / 180 * Math.PI);
                 this.field[i + j * this.cols].setMag(mag);
             }
+        }
+    }
+}
+
+class Plant {
+    constructor (plant_name, species) {
+        this.name = plant_name;
+        this.species = species;
+        this.list = [];
+    }
+
+    update(system) {
+        for (let list of this.list) {
+            list.update(system);
+        }
+    }
+
+    show() {
+        for (let list of this.list) {
+            list.show();
+        }
+    }
+
+    addPlant(num, xx, yy, rr, area_radiuss, grow_lengthh, colourr) {
+        let x = xx;
+        let y = yy;
+        let r = rr;
+        let area_radius = area_radiuss;
+        let grow_length = grow_lengthh;
+        let colour = colourr;
+
+        let random_pos = false;
+        let random_radius = false;
+        let random_area_radius = false;
+        let random_grow_length = false;
+        let random_colour = false;
+
+        if (x === undefined && y === undefined) {
+            random_pos = true;
+        }
+        if (r === undefined) {
+            random_radius = true;
+        }
+        if (area_radius === undefined) {
+            random_area_radius = true;
+        }
+        if (grow_length === undefined) {
+            random_grow_length = true;
+        }
+        if (colour === undefined) {
+            random_colour = true;
+        }
+
+        for (let i = 0; i < num; i++) {
+            if (random_pos) {
+                x = random(width);
+                y = random(height);
+            }
+            if (random_radius) {
+                r = random(1, 2);
+            }
+            if (random_area_radius) {
+                area_radius = random(20, 30);
+            }
+            if (random_grow_length) {
+                grow_length = random(30, 50);
+            }
+            if (random_colour) {
+                let colour1 = color(234, 61, 37);
+                let colour2 = color(236, 106, 85);
+                colour = lerpColor(colour1, colour2, random(1));
+            }
+            this.list.push(new Coral(x, y, r, area_radius, grow_length, colour));
         }
     }
 }

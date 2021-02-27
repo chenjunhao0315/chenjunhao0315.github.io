@@ -641,6 +641,7 @@ let CREATURE = new carrer('CREATURE')
     .addLike('FOOD')
     .addHate('POISON')
     .setShape('FISH')
+    .addLike('CORAL_FOOD')
 
 // EATER
 let EATER = new carrer('EATER')
@@ -686,3 +687,4 @@ let PROVIDER = new carrer('PROVIDER')
     .addFear('CLEANER')
     .setRandomR([5, 8])
     .setCanProvide(true)
+    .addLike('CORAL_FOOD')
