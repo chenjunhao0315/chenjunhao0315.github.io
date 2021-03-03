@@ -37,7 +37,8 @@ function setup() {
 
     aquarium.addItem('CORAL_FOOD', [255, 0, 255], 1, false);
     aquarium.addPlant('CORAL', 'CORAL');
-    aquarium.plant[0].addPlant(10);
+    aquarium.addCoral('CORAL', 10);
+    //aquarium.plant[0].addPlant(10);
 
     //test_coral = new Coral(width / 2, height / 2, 2, 20, 30, color(236, 106, 85));
     
@@ -61,12 +62,10 @@ function draw() {
 
     aquarium.updatePopulation();
     aquarium.showPopulation();
+
     aquarium.updateQlist();
     
     preminute = minute();
-
-    //test_coral.show();
-    //test_coral.update();
 
     /*noFill();
     stroke(0, 200, 0);

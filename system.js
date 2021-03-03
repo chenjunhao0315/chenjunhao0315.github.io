@@ -49,6 +49,20 @@ class System {
         }
     }
 
+    addCoral(plant_name, num, x, y, r, area_radius, grow_length, colour) {
+        let index = null;
+        
+        for (let i = 0; i < this.plant.length; i++) {
+            if (this.plant[i].name == plant_name) {
+                index = i;
+            }
+        }
+        
+        if (index != null) {
+            this.plant[index].addPlant(num, x, y, r, area_radius, grow_length, colour);
+        }
+    }
+
     addPlant(plant_name, species) {
         this.plant.push(new Plant(plant_name, species));
     }
