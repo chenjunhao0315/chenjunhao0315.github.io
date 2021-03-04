@@ -10,14 +10,52 @@ class System {
     }
 
     systemInformation() {
+        textSize(width / 100);
+        textFont('Georgia');
+        // information box
         fill(7, 30, 52, 192);
-        rect(10, 10, 200, 50, 15);
-        fill(0, 191, 255);
-        text(this.weather.temp, 20, 30);
-        text(this.weather.humd, 50, 30);
-        text(this.getTotalAnimal(), 80, 30);
+        rect(width / 50, height / 40, width / 5, height / 9, 15);
 
-        this.showThermometer(width - 50, height / 2, 20);
+        fill(0, 191, 255);
+        text('Creature', width / 50 + width / 40, height / 19);
+        text(this.getTotalAnimal(), width / 50 + width / 40, height / 12);
+        text('Food', width / 50 + width / 17, height / 19);
+        text(this.item[0].list.length, width / 50 + width / 17, height / 12);
+        text('Posion', width / 50 + width / 11, height / 19);
+        text(this.item[1].list.length, width / 50 + width / 11, height / 12);
+
+        this.showThermometer(width * 29 / 30, height / 2, height / 30);
+        this.showHumidity(width / 27, height / 9.5, 10);
+    }
+
+    showHumidity(hygrometer_x, hygrometer_y, hygrometer_size) {
+        let offset_x = 0;
+        let offset_y = 0;
+        let drop_quantity = 6;
+
+        if (this.weather.humd != null) {
+            drop_quantity = floor(this.weather.humd * 10);
+        }
+
+        fill(126, 160, 196);
+        noStroke();
+        for (let i = 0; i < drop_quantity; i++) {
+            push();
+            translate(hygrometer_x + offset_x, hygrometer_y + offset_y);
+            beginShape();
+            vertex(-hygrometer_size / 2, hygrometer_size);
+            vertex(0, 0);
+            vertex(hygrometer_size / 2, hygrometer_size);
+            vertex(hygrometer_size / 3, hygrometer_size * 1.3);
+            vertex(hygrometer_size / 4, hygrometer_size * 1.4);
+            vertex(0, hygrometer_size * 3 / 2);
+            vertex(-hygrometer_size / 4, hygrometer_size * 1.4);
+            vertex(-hygrometer_size / 3, hygrometer_size * 1.3);
+            vertex(-hygrometer_size / 2, hygrometer_size);
+            endShape();
+            pop();
+            offset_x += hygrometer_size * 1.3;
+        }
     }
 
     showThermometer(thermometer_x, thermometer_y, thermometer_size) {
@@ -29,7 +67,7 @@ class System {
         if (this.weather.temp != null) {
             colorMode(HSB);
             thermometer_colour = lerpColor(cold, hot, (this.weather.temp - 5) / 40);
-            length = (thermometer_size * 4) * this.weather.temp / 30;
+            length = (thermometer_size * 4) * (this.weather.temp - 5) / 40;
         }
 
         stroke('gray');
@@ -52,10 +90,11 @@ class System {
         line(thermometer_x, thermometer_y - thermometer_size / 2, thermometer_x, thermometer_y - (thermometer_size / 2 + length));
 
         textAlign(CENTER, CENTER);
-        textSize(thermometer_size / 2);
-        fill('white');
-        stroke(0, 0, 0);
-        strokeWeight(2);
+        textSize(thermometer_size / 2 - 1);
+        colorMode(RGB);
+        fill(255);
+        stroke(lerpColor(thermometer_colour, color(0), 0.5));
+        strokeWeight(thermometer_size / 10);
         text(this.weather.temp, thermometer_x, thermometer_y);
 
         colorMode(RGB);
@@ -149,6 +188,20 @@ class System {
             let diff = abs(this.weather.temp - (this.property.temp[1] + this.property.temp[0]) / 2);
             let offset = map(diff, 0, range, 0, 1);
             this.property.colour[2] = lerpColor(this.property.colour[0], this.property.colour[1], offset);
+
+            if (this.weather.uvi != null) {
+                if (this.weather.uvi < 2) {
+                    this.property.setMutationRate(0.01);
+                } else if (this.weather.uvi < 4) {
+                    this.property.setMutationRate(0.02);
+                } else if (this.weather.uvi < 6) {
+                    this.property.setMutationRate(0.03);
+                } else if (this.weather.uvi < 10) {
+                    this.property.setMutationRate(0.04);
+                } else {
+                    this.property.setMutationRate(0.05);
+                }
+            } 
         }
     }
 
@@ -538,6 +591,7 @@ class Weather {
         this.temp = null;
         this.humd = null;
         this.pres = null;
+        this.uvi = null;
     }
 
     update(weather) {
@@ -547,6 +601,7 @@ class Weather {
             this.temp = float(weather["records"]["location"][0]["weatherElement"][3]["elementValue"]);
             this.humd = float(weather["records"]["location"][0]["weatherElement"][4]["elementValue"]);
             this.pres = float(weather["records"]["location"][0]["weatherElement"][5]["elementValue"]);
+            this.uvi = float(weather["records"]["location"][0]["weatherElement"][13]["elementValue"]);
             if (this.wdir == -99) {
                 this.wdir = null;
             }
@@ -562,13 +617,16 @@ class Weather {
             if (this.pres == -99) {
                 this.wdir = null;
             }
+            if (this.uvi == -99) {
+                this.uvi = null;
+            }
         }
     }
 }
 
 class Property {
     constructor() {
-        this.max_creature = 200;
+        this.max_creature = 150;
         this.provide_rate = 0.03;
         this.reproduction_rate = 0.5;
         this.mutation_rate = 0.01;
