@@ -64,6 +64,8 @@ function draw() {
     aquarium.showPopulation();
 
     aquarium.updateQlist();
+
+    aquarium.systemInformation();
     
     preminute = minute();
 

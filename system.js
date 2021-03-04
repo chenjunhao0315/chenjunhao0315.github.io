@@ -9,6 +9,59 @@ class System {
         this.property = new Property();
     }
 
+    systemInformation() {
+        fill(7, 30, 52, 192);
+        rect(10, 10, 200, 50, 15);
+        fill(0, 191, 255);
+        text(this.weather.temp, 20, 30);
+        text(this.weather.humd, 50, 30);
+        text(this.getTotalAnimal(), 80, 30);
+
+        this.showThermometer(width - 50, height / 2, 20);
+    }
+
+    showThermometer(thermometer_x, thermometer_y, thermometer_size) {
+        let thermometer_colour = color(237, 106, 44);
+        let cold = color(96, 164, 230);
+        let hot = color(197, 63, 61);
+        let length = thermometer_size * 2;
+
+        if (this.weather.temp != null) {
+            colorMode(HSB);
+            thermometer_colour = lerpColor(cold, hot, (this.weather.temp - 5) / 40);
+            length = (thermometer_size * 4) * this.weather.temp / 30;
+        }
+
+        stroke('gray');
+        strokeWeight(thermometer_size / 6);
+        noFill();
+        angleMode(DEGREES);
+        arc(thermometer_x, thermometer_y, thermometer_size * 1.5, thermometer_size * 1.5, -55, -125);
+
+        line(thermometer_x - (thermometer_size * 0.75 * sin(30)), thermometer_y - (thermometer_size * 0.75 * cos(30)), thermometer_x - (thermometer_size * 0.75 * sin(30)), thermometer_y - thermometer_size * 4.5);
+        line(thermometer_x + (thermometer_size * 0.75 * sin(30)), thermometer_y - (thermometer_size * 0.75 * cos(30)), thermometer_x + (thermometer_size * 0.75 * sin(30)), thermometer_y - thermometer_size * 4.5);
+
+        arc(thermometer_x, thermometer_y - thermometer_size * 4.5, thermometer_size * 1.5 * sin(30), thermometer_size * 1.5 * sin(30), -180, 0);
+
+        noStroke();
+        fill(thermometer_colour);
+        ellipse(thermometer_x, thermometer_y, thermometer_size, thermometer_size);
+        stroke(thermometer_colour);
+        strokeWeight(thermometer_size / 5);
+        
+        line(thermometer_x, thermometer_y - thermometer_size / 2, thermometer_x, thermometer_y - (thermometer_size / 2 + length));
+
+        textAlign(CENTER, CENTER);
+        textSize(thermometer_size / 2);
+        fill('white');
+        stroke(0, 0, 0);
+        strokeWeight(2);
+        text(this.weather.temp, thermometer_x, thermometer_y);
+
+        colorMode(RGB);
+        angleMode(RADIANS);
+    }
+
     updatePlant(plant_name) {
         if (plant_name === undefined) {
             for (let plant of this.plant) {
