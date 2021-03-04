@@ -14,18 +14,18 @@ class System {
         textFont('Georgia');
         // information box
         fill(7, 30, 52, 192);
-        rect(width / 50, height / 40, width / 5, height / 9, 15);
+        rect(width / 80, width / 80, width / 5, (width / 5 - width / 80) / 5 + width / 80, 15);
 
         fill(0, 191, 255);
-        text('Creature', width / 50 + width / 40, height / 19);
-        text(this.getTotalAnimal(), width / 50 + width / 40, height / 12);
-        text('Food', width / 50 + width / 17, height / 19);
-        text(this.item[0].list.length, width / 50 + width / 17, height / 12);
-        text('Posion', width / 50 + width / 11, height / 19);
-        text(this.item[1].list.length, width / 50 + width / 11, height / 12);
+        text('Creature', width / 50 + width / 40, (width / 5 - width / 80) / 5 / 4 + width / 80);
+        text(this.getTotalAnimal(), width / 50 + width / 40, (width / 5 - width / 80) / 5 * 2.5 / 4 + width / 80);
+        text('Food', width / 50 + width / 17, (width / 5 - width / 80) / 5 / 4 + width / 80);
+        text(this.item[0].list.length, width / 50 + width / 17, (width / 5 - width / 80) / 5 * 2.5 / 4 + width / 80);
+        text('Posion', width / 50 + width / 11, (width / 5 - width / 80) / 5 / 4 + width / 80);
+        text(this.item[1].list.length, width / 50 + width / 11, (width / 5 - width / 80) / 5 * 2.5 / 4 + width / 80);
 
-        this.showThermometer(width * 29 / 30, height / 2, height / 30);
-        this.showHumidity(width / 27, height / 9.5, 10);
+        this.showThermometer(width - height / 15, height / 2, height / 30);
+        this.showHumidity(width / 27, (width / 5 - width / 80) / 5 * 3.5 / 4 + width / 80, 10);
     }
 
     showHumidity(hygrometer_x, hygrometer_y, hygrometer_size) {
