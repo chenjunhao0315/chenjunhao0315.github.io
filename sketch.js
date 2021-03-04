@@ -15,7 +15,7 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
+    createCanvas(windowWidth, windowHeight * 3 / 4);
     
     aquarium = new System('aquarium');
     aquarium.addPopulation('CREATURE', CREATURE);
