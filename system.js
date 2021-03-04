@@ -25,7 +25,7 @@ class System {
         text(this.item[1].list.length, width / 50 + width / 11, (width / 5 - width / 80) / 5 * 2.5 / 4 + width / 80);
 
         this.showThermometer(width - height / 15, height / 2, height / 30);
-        this.showHumidity(width / 27, (width / 5 - width / 80) / 5 * 3.5 / 4 + width / 80, 10);
+        this.showHumidity(width / 27, (width / 5 - width / 80) / 5 * 3.5 / 4 + width / 80, width / 144);
     }
 
     showHumidity(hygrometer_x, hygrometer_y, hygrometer_size) {
