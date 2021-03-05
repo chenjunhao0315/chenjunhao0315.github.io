@@ -10,25 +10,33 @@ class System {
     }
 
     systemInformation() {
-        textSize(width / 100);
+        let box_x = width / 80;
+        let box_y = width / 80;
+        let box_width = (width + height) / 8;
+        let box_height = box_width / 5;
+        let string_width = 0;
+        let string_margin = box_width / 40;
+        let string_offset = box_width / 20;
+
+        let list = ['Creature', 'Food', 'Poison', 'Body', 'FPS'];
+        let list_data = [this.getTotalAnimal(), this.item[0].list.length, this.item[1].list.length, this.item[2].list.length, floor(frameRate())];
+
+        textSize((width + height) / 150);
         textFont('Georgia');
         // information box
         fill(7, 30, 52, 192);
-        rect(width / 80, width / 80, width / 5, (width / 5 - width / 80) / 5 + width / 80, 15);
+        rect(box_x, box_y, box_x + box_width, box_y + box_height, 15);
 
         fill(0, 191, 255);
-        text('Creature', width / 50 + width / 40, (width / 5 - width / 80) / 5 / 4 + width / 80);
-        text(this.getTotalAnimal(), width / 50 + width / 40, (width / 5 - width / 80) / 5 * 2.5 / 4 + width / 80);
-        text('Food', width / 50 + width / 17, (width / 5 - width / 80) / 5 / 4 + width / 80);
-        text(this.item[0].list.length, width / 50 + width / 17, (width / 5 - width / 80) / 5 * 2.5 / 4 + width / 80);
-        text('Posion', width / 50 + width / 11, (width / 5 - width / 80) / 5 / 4 + width / 80);
-        text(this.item[1].list.length, width / 50 + width / 11, (width / 5 - width / 80) / 5 * 2.5 / 4 + width / 80);
+        for (let i  = 0; i < list.length; i++) {
+            string_width = textWidth(list[i]);
+            text(list[i], box_x + string_width / 2 + string_offset, box_y + box_height / 4);
+            text(list_data[i], box_x + string_width / 2 + string_offset, box_y + box_height * 2.5 / 4);
+            string_offset += (string_width + string_margin);
+        }
 
-        text('FPS', width / 50 + width / 8, (width / 5 - width / 80) / 5 / 4 + width / 80);
-        text(floor(frameRate()), width / 50 + width / 8, (width / 5 - width / 80) / 5 * 2.5 / 4 + width / 80);
-
-        this.showThermometer(width - height / 15, height / 2, height / 30);
-        this.showHumidity(width / 27, (width / 5 - width / 80) / 5 * 3.5 / 4 + width / 80, width / 144);
+        this.showThermometer(width - box_x * 2, height / 2, box_x);
+        this.showHumidity(box_x + box_width / 10, box_y + box_height * 3.7 / 4, width / 144);
     }
 
     showHumidity(hygrometer_x, hygrometer_y, hygrometer_size) {

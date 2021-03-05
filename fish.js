@@ -543,6 +543,11 @@ class fish {
                 circle(-this.radius/ 11, -this.radius* 9 / 10, this.radius/ 10);
                 break;
             default :
+                beginShape();
+                vertex(0, -this.radius);
+                vertex(-this.radius / 2, this.radius);
+                vertex(this.radius / 2, this.radius);
+                endShape(CLOSE);
                 break;
         }
         pop();
