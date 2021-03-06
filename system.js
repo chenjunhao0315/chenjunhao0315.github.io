@@ -35,8 +35,8 @@ class System {
             string_offset += (string_width + string_margin);
         }
 
-        this.showThermometer(width - box_x * 2, height / 2, box_x);
-        this.showHumidity(box_x + box_width / 10, box_y + box_height * 3.7 / 4, width / 144);
+        this.showThermometer(width - box_width / 10 * 2, height / 2, box_width / 10);
+        this.showHumidity(box_x + box_width / 10, box_y + box_height * 3.7 / 4, box_width / 25);
     }
 
     showHumidity(hygrometer_x, hygrometer_y, hygrometer_size) {
@@ -498,9 +498,9 @@ class System {
             this.addStuff('POISON', 1);
         }
         //console.log(creature_list.length);
-        if (this.getList('CREATURE').length < 50) {
+        /*if (this.getList('CREATURE').length < 50) {
             this.addAnimal('CREATURE', 10);
-        }
+        }*/
         //console.log(eater_list.length);
         if (this.getList('EATER').length < 1) {
             this.addAnimal('EATER', floor(random(1, 4)));

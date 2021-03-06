@@ -20,7 +20,7 @@ function setup() {
     aquarium = new System('aquarium');
     aquarium.addPopulation('CREATURE', CREATURE);
     aquarium.addPopulation('EATER', EATER);
-    aquarium.addAnimal('CREATURE', 150);
+    aquarium.addAnimal('CREATURE', 50);
     aquarium.addAnimal('EATER', floor(random(1, 4)));
     aquarium.addItem('FOOD', [0, 255, 0], 1, true);
     aquarium.addItem('POISON', [255, 0, 0], 1, true);

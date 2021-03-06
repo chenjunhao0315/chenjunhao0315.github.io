@@ -20,6 +20,8 @@ class fish {
         this.Foodnutrition = carrer.Foodnutrition || 0.5;
         this.Poisonnutrition = carrer.Poisonnutrition || -0.4;
         this.colour = carrer.colour;
+        this.reproduceCycle = carrer.reproduceCycle;
+        this.reproduceTime = 0;
         
         this.dna = this.setDna(dna);
         this.sex = (random(1) < 0.5) ? 'MALE' : 'FEMALE';
@@ -37,37 +39,131 @@ class fish {
         }
     }
     
-    reproduce(name, mutationRate) {   
+    reproduce(name, mutationRate) {  
+        if (this.sex == 'MALE') {
+            return;
+        } 
+
         let range = new Circle(this.pos.x, this.pos.y, this.radius * 2);
         let others = aquarium.getQList(name).query(range);
         
         for (let other of others) {
             if (other !== this) {
-                if (this.canReproduceWith(other.data)) {
-                    this.birthNewChild(name, other.data, mutationRate);
+                let d = this.pos.dist(other.data.pos);
+                if (d < this.radius + other.data.radius) {
+                    if (this.canReproduceWith(other.data)) {
+                        this.birthNewChild(name, other.data, mutationRate);
+                    }
                 }
             }
         }
     }
     
     birthNewChild(name, parent, mutationRate) {
-        let x = this.pos.x + random(this.vel.x, parent.vel.x);
-        let y = this.pos.y + random(this.vel.y, parent.vel.y);
-        this.child += 1;
-        parent.child += 1;
-        
-        let new_DNA = this.crossoverDNA(parent, mutationRate);
-        
-        aquarium.addAnimal(name, 1, x, y, 5, new_DNA);
+        let child_quantity = (this.dna[7] + parent.dna[7]) / 2;
+
+        this.child += child_quantity;
+        parent.child += child_quantity;
+        this.reproduceTime = 0;
+        parent.reproduceTime = 0;
+
+        for (let i = 0; i < child_quantity; i++) {
+            let x = this.pos.x + random(this.vel.x, parent.vel.x);
+            let y = this.pos.y + random(this.vel.y, parent.vel.y);
+            let new_DNA = this.crossoverDNA(parent, mutationRate);
+            aquarium.addAnimal(name, 1, x, y, 5, new_DNA);
+        }
     }
     
     canReproduceWith(fish) {
         let isAdult = (fish.radius + this.radius > 16);
         let isSameGender = fish.sex === this.sex;
         let isHealthy = (fish.health + this.health > 0.9);
-        let isAge = (fish.age > fish.child && this.age > this.child);
+        //let isAge = (fish.age > fish.child && this.age > this.child);
+        let isAge = true;
+        let isCycle = (this.reproduceTime > this.reproduceCycle && fish.reproduceTime > fish.reproduceCycle);
         
-        return (isAdult && !isSameGender && isHealthy && isAge);
+        return (isAdult && !isSameGender && isHealthy && isAge && isCycle);
+    }
+
+    crossoverDNA(parent, mutationRate) {
+        let score = this.age + parent.age;
+        let crossoverRatio = this.age / score;
+        let gene = [];
+        
+        for (let i = 0; i < this.dna.length; i++) {
+            if (random(1) < crossoverRatio) {
+                gene[i] = this.dna[i];
+            } else {
+                gene[i] = parent.dna[i];
+            }
+        }
+        // food weight
+        gene[0] = this.mutate(gene[0], mutationRate, [0.2, -0.2]);
+        // poison weight
+        gene[1] = this.mutate(gene[1], mutationRate, [-0.2, 0.2]);
+        // food perception
+        gene[2] = this.mutate(gene[2], mutationRate, [-10, 20]);
+        // poison perception
+        gene[3] = this.mutate(gene[3], mutationRate, [-10, 20]);
+        // fear weight
+        gene[4] = this.mutate(gene[4], mutationRate, [-0.2, 0.2]);
+        // fear perception
+        gene[5] = this.mutate(gene[5], mutationRate, [-10, 20]);
+        // speed gene
+        gene[6] = this.mutate(gene[6], mutationRate, [-0.1, 0.1]);
+        // child quantity
+        gene[7] = this.mutate(gene[7], mutationRate, [-3, 3]);
+        // mate perception
+        gene[8] = this.mutate(gene[8], mutationRate, [-10, 20]);
+        // mate weight
+        gene[9] = this.mutate(gene[9], mutationRate, [-0.2, 0.2]);
+        return gene;
+    }
+    
+    setDna(dna) {
+        let gene = [];
+        if (dna === undefined) {
+            // food weight
+            gene[0] = random(0.5, 1);
+            // poison weight
+            gene[1] = random(-0.3, -0.8);
+            // food perception
+            gene[2] = random(20, 100);
+            // poison perception
+            gene[3] = random(20, 100);
+            // fear weight
+            gene[4] = random(1, 3);
+            // fear perception
+            gene[5] = random(20, 100);
+            // speed gene
+            gene[6] = random(-0.5, 0.5);
+            // child quantity
+            gene[7] = random(10, 20);
+            // mate perception
+            gene[8] = random(20, 100);
+            // mate weight
+            gene[9] = random(3, 5);
+        } else {
+            gene[0] = dna[0];
+            gene[1] = dna[1];
+            gene[2] = dna[2];
+            gene[3] = dna[3];
+            gene[4] = dna[4];
+            gene[5] = dna[5];
+            gene[6] = dna[6];
+            gene[7] = dna[7];
+            gene[8] = dna[8];
+            gene[9] = dna[9];
+        }
+        return gene;
+    }
+    
+    mutate(gene, mutationRate, value) {
+        if (random(1) < mutationRate) {
+            gene += random(value[0], value[1]);
+        }
+        return gene;
     }
     
     behavior(system) {
@@ -99,11 +195,49 @@ class fish {
         steerPoison.mult(this.dna[1]);
         alwayFear.mult(this.dna[4]);
         steerPrey.mult(this.dna[0]);
+
+        let steerMate = new Vector(0, 0);
+
+        if (this.reproduceTime > this.reproduceCycle && this.canReproduce) {
+            steerMate = this.findMate(system, this.dna[8] * (this.reproduceTime - this.reproduceCycle));
+        }
+        steerMate.mult(this.dna[9]);
         
         this.applyForce(steerFood);
         this.applyForce(steerPoison);
         this.applyForce(alwayFear);
         this.applyForce(steerPrey);
+        this.applyForce(steerMate);
+    }
+
+    findMate(system, perceptionRadius) {
+        let record = Infinity;
+        let closest = null;
+        
+        let searchRange = new Circle(this.pos.x, this.pos.y, perceptionRadius);
+        
+        let action_qlist = system.getQList(this.name);
+            
+        let founds;
+            
+        if (action_qlist != null) {
+            founds = action_qlist.query(searchRange);
+        } else {
+            return new Vector(0, 0);
+        }
+            
+        for (let target of founds) {
+            let d = this.pos.dist(target.data.pos);
+            if (d < record && this.sex !== target.data.sex) {
+                record = d;
+                closest = target;
+            }
+        }
+        
+        if (closest != null) {
+            return this.seek(closest.data.pos);
+        }
+        return new Vector(0, 0);
     }
     
     fear_motion(system, fear_list) {
@@ -173,8 +307,10 @@ class fish {
                     this.health += 0.5;
                     this.radius += 0.1;
                 } else {
-                    record = d;
-                    closest = food;
+                    if (d < record) {
+                        record = d;
+                        closest = food;
+                    }
                 }
             }
         }
@@ -237,7 +373,7 @@ class fish {
         let aligment = this.aligment(list);
         let cohesion = this.cohesion(list);
         
-        this.applyForce(separation.mult(1));
+        this.applyForce(separation.mult(0.8));
         this.applyForce(aligment.mult(0.8));
         this.applyForce(cohesion.mult(0.7));
     }
@@ -318,59 +454,6 @@ class fish {
         return steer;
     }
     
-    crossoverDNA(parent, mutationRate) {
-        let score = this.age + parent.age;
-        let crossoverRatio = this.age / score;
-        let gene = [];
-        
-        for (let i = 0; i < this.dna.length; i++) {
-            if (random(1) < crossoverRatio) {
-                gene[i] = this.dna[i];
-            } else {
-                gene[i] = parent.dna[i];
-            }
-        }
-        this.mutate(gene[0], mutationRate, [0.2, -0.2]);
-        this.mutate(gene[1], mutationRate, [-0.2, 0.2]);
-        this.mutate(gene[2], mutationRate, [-10, 20]);
-        this.mutate(gene[3], mutationRate, [-10, 20]);
-        this.mutate(gene[4], mutationRate, [-0.2, 0.2]);
-        this.mutate(gene[5], mutationRate, [-10, 20]);
-        return gene;
-    }
-    
-    setDna(dna) {
-        let gene = [];
-        if (dna === undefined) {
-            // food weight
-            gene[0] = random(0.5, 1);
-            // poison weight
-            gene[1] = random(-0.3, -0.8);
-            // food perception
-            gene[2] = random(20, 100);
-            // poison perception
-            gene[3] = random(20, 100);
-            // fear weight
-            gene[4] = random(1, 3);
-            // fear perception
-            gene[5] = random(20, 100);
-        } else {
-            gene[0] = dna[0];
-            gene[1] = dna[1];
-            gene[2] = dna[2];
-            gene[3] = dna[3];
-            gene[4] = dna[4];
-            gene[5] = dna[5];
-        }
-        return gene;
-    }
-    
-    mutate(gene, mutationRate, value) {
-        if (random(1) < mutationRate) {
-            gene += random(value[0], value[1]);
-        }
-    }
-    
     applyForce(force) {
         this.acc.add(force);
     }
@@ -407,13 +490,15 @@ class fish {
     
     update() {
         this.vel.add(this.acc);
-        this.vel.limit(this.maxSpeed);
+        this.vel.limit(this.maxSpeed + this.dna[6]);
         this.pos.add(this.vel);
         this.acc.mult(0);
-        this.health -= this.healthDecrease;
+        this.health -= (this.radius * this.radius * this.vel.mag() * this.vel.mag() * this.vel.mag() * this.healthDecrease / 100);
+        //this.health -= this.healthDecrease;
         this.health = clamp(this.health, 0, 1);
         this.radius = clamp(this.radius, 0, this.maxRadius);
         this.age += 0.025;
+        this.reproduceTime += 0.001;
     }
     
     display() {
@@ -554,6 +639,66 @@ class fish {
     }
 }
 
+class DNA {
+    constructor(gene) {
+        this.gene = [];
+        if (dan === undefined) {
+            // food weight
+            this.gene[0] = random(0.5, 1);
+            // poison weight
+            this.gene[1] = random(-0.3, -0.8);
+            // food perception
+            this.gene[2] = random(20, 100);
+            // poison perception
+            this.gene[3] = random(20, 100);
+            // fear weight
+            this.gene[4] = random(1, 3);
+            // fear perception
+            this.gene[5] = random(20, 100);
+        } else {
+            this.gene[0] = gene[0];
+            this.gene[1] = gene[1];
+            this.gene[2] = gene[2];
+            this.gene[3] = gene[3];
+            this.gene[4] = gene[4];
+            this.gene[5] = gene[5];
+        }
+    }
+
+    getRatio(mother, father) {
+        let score = mother.age + father.age;
+        let ratio = mother.age / score;
+
+        return ratio;
+    }
+
+    crossover(mother, father) {
+        let gene = [];
+        let ratio = getRatio(mother, father);
+        
+        for (let i = 0; i < this.gene.length; i++) {
+            if (random(1) < crossoverRatio) {
+                gene[i] = this.gene[i];
+            } else {
+                gene[i] = parent_DNA.gene[i];
+            }
+        }
+        // food weight
+        gene[0] = this.mutate(gene[0], mutationRate, [0.2, -0.2]);
+        // poison weight
+        gene[1] = this.mutate(gene[1], mutationRate, [-0.2, 0.2]);
+        // food perception
+        gene[2] = this.mutate(gene[2], mutationRate, [-10, 20]);
+        // poison perception
+        gene[3] = this.mutate(gene[3], mutationRate, [-10, 20]);
+        // fear weight
+        gene[4] = this.mutate(gene[4], mutationRate, [-0.2, 0.2]);
+        // fear perception
+        gene[5] = this.mutate(gene[5], mutationRate, [-10, 20]);
+        return gene;
+    }
+}
+
 class carrer {
     constructor(type) {
         this.type = type;
@@ -564,6 +709,7 @@ class carrer {
         this.randomR = [5, 7];
         this.canReproduce = false;
         this.canProvide = false;
+        this.reproduceCycle = 1;
     }
     
     setMaxRadius(r = 20) {
@@ -636,6 +782,11 @@ class carrer {
     	this.canProvide = bool;
     	return this;
     }
+
+    setReproduceCycle(val) {
+        this.reproduceCycle = val;
+        return this;
+    }
 }
 
 // CREATURE
@@ -647,6 +798,7 @@ let CREATURE = new carrer('CREATURE')
     .addHate('POISON')
     .setShape('FISH')
     .addLike('CORAL_FOOD')
+    .setReproduceCycle(0.5)
 
 // EATER
 let EATER = new carrer('EATER')
@@ -670,7 +822,7 @@ let CLEANER = new carrer('CLEANER')
     .setMaxForce(0.2)
     .setHealthDecrease(0.001)
     .setColour([231, 82, 40])
-    .setNutrition([0.1, 0])
+    .setNutrition([0.3, 0])
     .addFear('EATER')
     .addFear('CREATURE')
     .addLike('POISON')
