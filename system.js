@@ -18,8 +18,8 @@ class System {
         let string_margin = box_width / 40;
         let string_offset = box_width / 20;
 
-        let list = ['Creature', 'Food', 'Poison', 'Body', 'FPS'];
-        let list_data = [this.getTotalAnimal(), this.item[0].list.length, this.item[1].list.length, this.item[2].list.length, floor(frameRate())];
+        let list = ['Creature', 'Food', 'Poison', 'Body', 'FPS', 'Align', 'Cohesion', 'Separate', 'FindMate'];
+        let list_data = [this.getTotalAnimal(), this.item[0].list.length, this.item[1].list.length, this.item[2].list.length, floor(frameRate()), alignSlider.value(), cohesionSlider.value(), separationSlider.value(), findMateSlider.value()];
 
         textSize((width + height) / 150);
         textFont('Georgia');
@@ -491,7 +491,7 @@ class System {
     }
     
     populationcontrol() {
-        if (random(1) < this.property.provide_rate) {
+        if (random(1) < this.property.provide_rate && this.item[0].list.length < 150) {
             this.addStuff('FOOD', 12);
         }
         if (random(1) < this.property.provide_rate) {

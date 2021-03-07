@@ -7,6 +7,8 @@ let aquarium;
 
 let test_coral;
 
+let alignSlider, cohesionSlider, separationSlider, findMateSlider;
+
 function preload() {
     let url = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWB-0505FC6C-E0E7-4991-9FD4-1D01A8C4E39C&format=JSON&locationName=%E6%96%B0%E7%AB%B9";
     weather_data = loadJSON(url);
@@ -16,12 +18,17 @@ function preload() {
 
 function setup() {
     createCanvas(windowWidth, windowHeight * 3 / 4);
+
+    alignSlider = createSlider(0, 2, 0.8, 0.1);
+    cohesionSlider = createSlider(0, 2, 0.7, 0.1);
+    separationSlider = createSlider(0, 2, 0.6, 0.1);
+    findMateSlider = createSlider(0, 10, 3, 0.5);
     
     aquarium = new System('aquarium');
     aquarium.addPopulation('CREATURE', CREATURE);
     aquarium.addPopulation('EATER', EATER);
     aquarium.addAnimal('CREATURE', 50);
-    aquarium.addAnimal('EATER', floor(random(1, 4)));
+    aquarium.addAnimal('EATER', floor(random(2, 4)));
     aquarium.addItem('FOOD', [0, 255, 0], 1, true);
     aquarium.addItem('POISON', [255, 0, 0], 1, true);
     aquarium.addStuff('FOOD', 100);

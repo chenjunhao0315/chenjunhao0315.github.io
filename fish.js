@@ -201,7 +201,7 @@ class fish {
         if (this.reproduceTime > this.reproduceCycle && this.canReproduce) {
             steerMate = this.findMate(system, this.dna[8] * (this.reproduceTime - this.reproduceCycle));
         }
-        steerMate.mult(this.dna[9]);
+        steerMate.mult(findMateSlider.value());
         
         this.applyForce(steerFood);
         this.applyForce(steerPoison);
@@ -373,9 +373,9 @@ class fish {
         let aligment = this.aligment(list);
         let cohesion = this.cohesion(list);
         
-        this.applyForce(separation.mult(0.8));
-        this.applyForce(aligment.mult(0.8));
-        this.applyForce(cohesion.mult(0.7));
+        this.applyForce(separation.mult(separationSlider.value()));
+        this.applyForce(aligment.mult(alignSlider.value()));
+        this.applyForce(cohesion.mult(cohesionSlider.value()));
     }
     
     cohesion(list) {
@@ -428,7 +428,7 @@ class fish {
     }
     
     separation(list) {
-        let separationRadius = this.radius * 4;
+        let separationRadius = this.radius * this.radius / 2;
         let steer = new Vector(0, 0);
         let total = 0;
         
@@ -803,7 +803,7 @@ let CREATURE = new carrer('CREATURE')
 // EATER
 let EATER = new carrer('EATER')
     .setMaxRadius(20)
-    .setMaxSpeed(1.7)
+    .setMaxSpeed(1.8)
     .setMaxForce(0.05)
     .setHealthDecrease(0.001)
     .setColour([0, 191, 255])
@@ -814,6 +814,7 @@ let EATER = new carrer('EATER')
     .addHate('POISON')
     .setShape('FISH')
     .setRandomR([3, 8])
+    .setCanReproduce(true)
 
 // CLEANER
 let CLEANER = new carrer('CLEANER')
