@@ -7,6 +7,7 @@ class System {
         this.field = [];
         this.weather = new Weather();
         this.property = new Property();
+        this.time = second();
     }
 
     systemInformation() {
@@ -491,9 +492,10 @@ class System {
     }
     
     populationcontrol() {
-        if (random(1) < this.property.provide_rate && this.item[0].list.length < 150) {
-            this.addStuff('FOOD', 12);
+        if (second() != this.time && this.item[0].list.length < 150) {
+            this.addStuff('FOOD', 10);
         }
+        this.time = second();
         if (random(1) < this.property.provide_rate) {
             this.addStuff('POISON', 1);
         }

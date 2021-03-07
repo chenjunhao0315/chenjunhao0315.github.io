@@ -199,10 +199,10 @@ class fish {
 
         let steerMate = new Vector(0, 0);
 
-        if (this.reproduceTime > 2 * this.reproduceCycle && this.canReproduce) {
-            steerMate = this.findMate(system, qlist, (this.dna[8] * (this.reproduceTime / this.reproduceCycle / 2)));
-        }
-        steerMate.mult(findMateSlider.value());
+        //if (this.reproduceTime > 2 * this.reproduceCycle && this.canReproduce) {
+        steerMate = this.findMate(system, qlist, (this.dna[8] * (this.reproduceTime / this.reproduceCycle)));
+        //}
+        steerMate.mult(this.dna[9] * (this.reproduceTime / this.reproduceCycle) * findMateSlider.value());
         
         this.applyForce(steerFood);
         this.applyForce(steerPoison);
@@ -218,6 +218,10 @@ class fish {
         let searchRange = new Circle(this.pos.x, this.pos.y, perceptionRadius);
             
         let founds = null;
+
+        if (this.reproduceTime < this.reproduceCycle || this.canReproduce == false) {
+            return new Vector(0, 0);
+        }
             
         founds = qlist.query(searchRange);
             
@@ -631,66 +635,6 @@ class fish {
                 break;
         }
         pop();
-    }
-}
-
-class DNA {
-    constructor(gene) {
-        this.gene = [];
-        if (dan === undefined) {
-            // food weight
-            this.gene[0] = random(0.5, 1);
-            // poison weight
-            this.gene[1] = random(-0.3, -0.8);
-            // food perception
-            this.gene[2] = random(20, 100);
-            // poison perception
-            this.gene[3] = random(20, 100);
-            // fear weight
-            this.gene[4] = random(1, 3);
-            // fear perception
-            this.gene[5] = random(20, 100);
-        } else {
-            this.gene[0] = gene[0];
-            this.gene[1] = gene[1];
-            this.gene[2] = gene[2];
-            this.gene[3] = gene[3];
-            this.gene[4] = gene[4];
-            this.gene[5] = gene[5];
-        }
-    }
-
-    getRatio(mother, father) {
-        let score = mother.age + father.age;
-        let ratio = mother.age / score;
-
-        return ratio;
-    }
-
-    crossover(mother, father) {
-        let gene = [];
-        let ratio = getRatio(mother, father);
-        
-        for (let i = 0; i < this.gene.length; i++) {
-            if (random(1) < crossoverRatio) {
-                gene[i] = this.gene[i];
-            } else {
-                gene[i] = parent_DNA.gene[i];
-            }
-        }
-        // food weight
-        gene[0] = this.mutate(gene[0], mutationRate, [0.2, -0.2]);
-        // poison weight
-        gene[1] = this.mutate(gene[1], mutationRate, [-0.2, 0.2]);
-        // food perception
-        gene[2] = this.mutate(gene[2], mutationRate, [-10, 20]);
-        // poison perception
-        gene[3] = this.mutate(gene[3], mutationRate, [-10, 20]);
-        // fear weight
-        gene[4] = this.mutate(gene[4], mutationRate, [-0.2, 0.2]);
-        // fear perception
-        gene[5] = this.mutate(gene[5], mutationRate, [-10, 20]);
-        return gene;
     }
 }
 

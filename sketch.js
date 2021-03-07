@@ -5,7 +5,8 @@ let preminute;
 
 let aquarium;
 
-let test_coral;
+let gene_test;
+let dna_test;
 
 let alignSlider, cohesionSlider, separationSlider, findMateSlider;
 
@@ -22,7 +23,7 @@ function setup() {
     alignSlider = createSlider(0, 2, 0.8, 0.1);
     cohesionSlider = createSlider(0, 2, 0.7, 0.1);
     separationSlider = createSlider(0, 2, 0.8, 0.1);
-    findMateSlider = createSlider(0, 2, 0.3, 0.1);
+    findMateSlider = createSlider(1, 2, 1, 0.1);
     
     aquarium = new System('aquarium');
     aquarium.addPopulation('CREATURE', CREATURE);
@@ -45,6 +46,10 @@ function setup() {
     aquarium.addItem('CORAL_FOOD', [255, 0, 255], 1, false);
     aquarium.addPlant('CORAL', 'CORAL');
     aquarium.addCoral('CORAL', 10);
+
+
+    gene_test = creature_gene.build();
+    dna_test = new DNA(gene_test);
     //aquarium.plant[0].addPlant(10);
 
     //test_coral = new Coral(width / 2, height / 2, 2, 20, 30, color(236, 106, 85));
