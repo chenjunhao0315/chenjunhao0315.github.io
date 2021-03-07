@@ -21,8 +21,8 @@ function setup() {
 
     alignSlider = createSlider(0, 2, 0.8, 0.1);
     cohesionSlider = createSlider(0, 2, 0.7, 0.1);
-    separationSlider = createSlider(0, 2, 0.6, 0.1);
-    findMateSlider = createSlider(0, 10, 3, 0.5);
+    separationSlider = createSlider(0, 2, 0.8, 0.1);
+    findMateSlider = createSlider(0, 2, 0.3, 0.1);
     
     aquarium = new System('aquarium');
     aquarium.addPopulation('CREATURE', CREATURE);

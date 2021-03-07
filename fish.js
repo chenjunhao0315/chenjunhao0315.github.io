@@ -20,6 +20,7 @@ class fish {
         this.Foodnutrition = carrer.Foodnutrition || 0.5;
         this.Poisonnutrition = carrer.Poisonnutrition || -0.4;
         this.colour = carrer.colour;
+        this.canReproduce = carrer.canReproduce || false;
         this.reproduceCycle = carrer.reproduceCycle;
         this.reproduceTime = 0;
         
@@ -143,7 +144,7 @@ class fish {
             // mate perception
             gene[8] = random(20, 100);
             // mate weight
-            gene[9] = random(3, 5);
+            gene[9] = random(0.3, 0.5);
         } else {
             gene[0] = dna[0];
             gene[1] = dna[1];
@@ -166,7 +167,7 @@ class fish {
         return gene;
     }
     
-    behavior(system) {
+    behavior(system, qlist) {
         let steerFood = new Vector(0, 0);
         let steerPoison = new Vector(0, 0);
         
@@ -198,8 +199,8 @@ class fish {
 
         let steerMate = new Vector(0, 0);
 
-        if (this.reproduceTime > this.reproduceCycle && this.canReproduce) {
-            steerMate = this.findMate(system, this.dna[8] * (this.reproduceTime - this.reproduceCycle));
+        if (this.reproduceTime > 2 * this.reproduceCycle && this.canReproduce) {
+            steerMate = this.findMate(system, qlist, (this.dna[8] * (this.reproduceTime / this.reproduceCycle / 2)));
         }
         steerMate.mult(findMateSlider.value());
         
@@ -210,25 +211,19 @@ class fish {
         this.applyForce(steerMate);
     }
 
-    findMate(system, perceptionRadius) {
+    findMate(system, qlist, perceptionRadius) {
         let record = Infinity;
         let closest = null;
         
         let searchRange = new Circle(this.pos.x, this.pos.y, perceptionRadius);
-        
-        let action_qlist = system.getQList(this.name);
             
-        let founds;
+        let founds = null;
             
-        if (action_qlist != null) {
-            founds = action_qlist.query(searchRange);
-        } else {
-            return new Vector(0, 0);
-        }
+        founds = qlist.query(searchRange);
             
         for (let target of founds) {
             let d = this.pos.dist(target.data.pos);
-            if (d < record && this.sex !== target.data.sex) {
+            if (d < record && this.sex != target.data.sex) {
                 record = d;
                 closest = target;
             }

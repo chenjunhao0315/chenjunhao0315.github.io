@@ -530,7 +530,7 @@ class population {
         for (let i = 0; i < this.list.length; i++) {
             this.list[i].boundaries();
             this.list[i].applyFlock(this.qlist);
-            this.list[i].behavior(system);
+            this.list[i].behavior(system, this.qlist);
             this.list[i].update();
             if (this.list[i].isDead()) {
                 if (this.list[i].radius > 10) {
