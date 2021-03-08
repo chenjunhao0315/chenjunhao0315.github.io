@@ -47,9 +47,6 @@ function setup() {
     aquarium.addPlant('CORAL', 'CORAL');
     aquarium.addCoral('CORAL', 10);
 
-
-    gene_test = creature_gene.build();
-    dna_test = new DNA(gene_test);
     //aquarium.plant[0].addPlant(10);
 
     //test_coral = new Coral(width / 2, height / 2, 2, 20, 30, color(236, 106, 85));
