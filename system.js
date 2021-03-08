@@ -20,7 +20,7 @@ class System {
         let string_offset = box_width / 20;
 
         let list = ['Creature', 'Food', 'Poison', 'Body', 'FPS', 'Align', 'Cohesion', 'Separate', 'FindMate'];
-        let list_data = [this.getTotalAnimal(), this.item[0].list.length, this.item[1].list.length, this.item[2].list.length, floor(frameRate()), alignSlider.value(), cohesionSlider.value(), separationSlider.value(), findMateSlider.value()];
+        let list_data = [this.getTotalAnimal(), this.item[0].list.length + this.item[3].list.length, this.item[1].list.length, this.item[2].list.length, floor(frameRate()), alignSlider.value(), cohesionSlider.value(), separationSlider.value(), findMateSlider.value()];
 
         textSize((width + height) / 150);
         textFont('Georgia');
@@ -426,13 +426,13 @@ class System {
                 for (let indiviual of pop.list) {
                     if (this.getTotalAnimal() < this.property.max_creature && random(1) < this.property.reproduction_rate) {
                         indiviual.reproduce(pop.name, this.property.mutation_rate);
-                    }
+                    } 
                 }
             }
             if (pop.carrer.canProvide) {
                 for (let indiviual of pop.list) {
                     if (random(1) < this.property.provide_rate) {
-                        aquarium.addStuff('FOOD', 1, indiviual.pos.x, indiviual.pos.y);
+                        //aquarium.addStuff('FOOD', 1, indiviual.pos.x, indiviual.pos.y);
                     }
                 }
             }
@@ -493,7 +493,7 @@ class System {
     
     populationcontrol() {
         if (second() != this.time && this.item[0].list.length < 150) {
-            this.addStuff('FOOD', 10);
+            this.addStuff('FOOD', 6);
         }
         this.time = second();
         if (random(1) < this.property.provide_rate) {

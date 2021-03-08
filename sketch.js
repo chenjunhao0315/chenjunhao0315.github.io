@@ -61,6 +61,8 @@ function draw() {
     //background(7, 30, 52);
     aquarium.background();
 
+    aquarium.updateQlist();
+
     aquarium.populationcontrol();
     if (preminute != minute()) {
         aquarium.environmentcontrol(weather_data);
@@ -74,8 +76,6 @@ function draw() {
 
     aquarium.updatePopulation();
     aquarium.showPopulation();
-
-    aquarium.updateQlist();
 
     aquarium.systemInformation();
     
