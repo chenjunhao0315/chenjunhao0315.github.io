@@ -22,7 +22,7 @@ class fish {
         this.colour = carrer.colour;
         this.canReproduce = carrer.canReproduce || false;
         this.reproduceCycle = carrer.reproduceCycle;
-        this.reproduceTime = 0;
+        this.reproduceTime = carrer.reproduceCycle / 2;
         
         //this.dna = this.setDna(dna);
         this.dna = dna || new DNA(carrer.dnaPrototype);
@@ -41,8 +41,8 @@ class fish {
         }
     }
     
-    reproduce(name, mutationRate) {  
-        if (this.sex === 'FEMALE') {
+    reproduce(name, mutationRate, reproduction_rate) {  
+        if (this.sex === 'MALE') {
             return;
         } 
 
@@ -51,12 +51,17 @@ class fish {
         
         for (let other of others) {
 
-            if (other !== this) {
-
+            if (other.data !== this) {
                 let d = this.pos.dist(other.data.pos);
                 if (d < this.radius + other.data.radius) {
-                    if (this.canReproduceWith(other.data)) {
+                    if (this.canReproduceWith(other.data, reproduction_rate)) {
                         this.birthNewChild(name, other.data, mutationRate);
+                    } else {
+                        if (this.reproduceTime < this.reproduceCycle && other.data.sex === 'MALE') {
+                            let getaway = new Vector.random2D();
+                            getaway.setMag(0.05);
+                            this.applyForce(getaway);
+                        }
                     }
                 }
             }
@@ -81,15 +86,16 @@ class fish {
         }
     }
     
-    canReproduceWith(fish) {
+    canReproduceWith(fish, reproduction_rate) {
         let isAdult = (fish.radius + this.radius > 16);
         let isSameGender = fish.sex === this.sex;
         let isHealthy = (fish.health + this.health > 0.9);
         //let isAge = (fish.age > fish.child && this.age > this.child);
         let isAge = true;
         let isCycle = (this.reproduceTime > this.reproduceCycle && fish.reproduceTime > fish.reproduceCycle);
+        let isRate = (random(1) < reproduction_rate);
         
-        return (isAdult && !isSameGender && isHealthy && isAge && isCycle);
+        return (isAdult && !isSameGender && isHealthy && isAge && isCycle && isRate);
     }
     
     behavior(system, qlist) {
@@ -104,9 +110,6 @@ class fish {
         if (this.like.length > 0) {
             steerFood.div(this.like.length);
         }
-
-        //console.log(steerFood);
-        //noLoop();
         
         for (let hate of this.hate) {
             //let steer = this.eat_food(system, hate, this.Foodnutrition, this.dna[3]);
@@ -117,11 +120,9 @@ class fish {
             steerPoison.div(this.hate.length);
         }
         
-        //console.log(this.fear);
         const alwayFear = this.fear_motion(system, this.fear);
         //const steerPrey = this.eat_fish(system, this.prey, this.dna[2]);
         const steerPrey = this.eat_fish(system, this.prey, this.dna.getInformation('FOOD_PERCEPTION'));
-        //console.log(alwayFear);
         
         steerFood.mult(this.dna.getInformation('FOOD_WEIGHT'));
         steerPoison.mult(this.dna.getInformation('POISON_WEIGHT'));
@@ -143,6 +144,10 @@ class fish {
     }
 
     findMate(system, qlist, perceptionRadius) {
+        if (this.sex === 'FEMALE') {
+            return new Vector(0, 0);
+        }
+
         let record = Infinity;
         let closest = null;
         

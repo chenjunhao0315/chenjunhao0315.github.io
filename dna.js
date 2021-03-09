@@ -55,6 +55,15 @@ class Dna_prototype {
         }
     }
 
+    getRawInformation(gene_name) {
+        for (let gene of this.gene_list) {
+            if (gene.name == gene_name) {
+                return gene.RawInformation;
+            }
+        }
+        return null;
+    }
+
     getOffset(gene_name) {
         for (let gene of this.gene_list) {
             if (gene.name == gene_name) {
@@ -99,10 +108,10 @@ class Gene {
 }
 
 let creature_dna_prototype = new Dna_prototype('CREATURE')
-    .setGene('FOOD_WEIGHT', [0.5, 1], [0.2, -0.2])
-    .setGene('POISON_WEIGHT', [-0.3, -0.8], [0.2, -0.2])
-    .setGene('FEAR_WEIGHT', [1, 3], [0.2, -0.2])
-    .setGene('MATE_WEIGHT', [0.3, 0.5], [0.2, -0.2])
+    .setGene('FOOD_WEIGHT', [0.5, 1], [-0.2, 0.2])
+    .setGene('POISON_WEIGHT', [-0.3, -0.8], [-0.2, 0.2])
+    .setGene('FEAR_WEIGHT', [1, 3], [-0.2, 0.2])
+    .setGene('MATE_WEIGHT', [0.3, 0.5], [-0.2, 0.2])
     .setGene('FOOD_PERCEPTION', [20, 100], [-10, 20])
     .setGene('POISON_PERCEPTION', [20, 100], [-10, 20])
     .setGene('FEAR_PERCEPTION', [20, 100], [-10, 20])

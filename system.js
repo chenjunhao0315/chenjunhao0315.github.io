@@ -8,6 +8,76 @@ class System {
         this.weather = new Weather();
         this.property = new Property();
         this.time = second();
+        this.log = [];
+    }
+
+    showGene(population_name, gene_name, resolution) {
+        for (let pop of this.population) {
+            if (pop.name == population_name) {
+                let stage = [];
+                let RawInformation = pop.carrer.dnaPrototype.getRawInformation(gene_name);
+                let offset = pop.carrer.dnaPrototype.getOffset(gene_name);
+
+                let low = RawInformation[0] + 3 * offset[0];
+                let high = RawInformation[1] + 3 * offset[1];
+                let step = (high - low) / resolution;
+
+                for (let i = 0; i < resolution; i++) {
+                    stage.push(0);
+                }
+
+                for (let creature of pop.list) {
+                    let information = creature.dna.getInformation(gene_name);
+                    let index = floor((information - low) / step);
+
+                    stage[index] += 1;
+                }
+
+                for (let i = 0; i < resolution; i++) {
+                    stroke(166, 226, 44);
+                    circle(width / 1.5 + i * 10, height / 2, 2);
+                    line(width / 1.5 + i * 10, height / 2, width / 1.5 + i * 10, height / 2 -stage[i] * 3);
+                }
+                return;
+            }
+        }
+    }
+
+    systemLog(name, val) {
+        if (name === undefined) {
+            for (let log of this.log) {
+                if (val === undefined) {
+                    log.log(this.getList(log.name).length);
+                } else {
+                    log.log(val);
+                }
+            }
+        } else {
+            for (let log of this.log) {
+                if (log.name == name) {
+                    if (val === undefined) {
+                        log.log(this.getList(log.name).length);
+                    } else {
+                        log.log(val);
+                    }
+                    return;
+                }
+            }
+        }
+    }
+
+    systemAddLog(name, length) {
+        if (name === undefined) {
+            for (let pop of this.population) {
+                this.log.push(new Log(pop.name));
+            }
+            for (let item of this.item) {
+                this.log.push(new Log(item.name));
+            }
+
+        } else {
+            this.log.push(new Log(name, length));
+        }
     }
 
     systemInformation() {
@@ -424,8 +494,8 @@ class System {
         for (let pop of this.population) {
             if (pop.carrer.canReproduce) {
                 for (let indiviual of pop.list) {
-                    if (this.getTotalAnimal() < this.property.max_creature && random(1) < this.property.reproduction_rate) {
-                        indiviual.reproduce(pop.name, this.property.mutation_rate);
+                    if (this.getTotalAnimal() < this.property.max_creature) {
+                        indiviual.reproduce(pop.name, this.property.mutation_rate, this.property.reproduction_rate);
                     } 
                 }
             }
@@ -514,6 +584,21 @@ class System {
         
         if (this.getList('PROVIDER').length < 1) {
             this.addAnimal('PROVIDER', floor(random(1, 4)));
+        }
+    }
+}
+
+class Log {
+    constructor(name, length) {
+        this.name = name;
+        this.length = length || 250;
+        this.information = [];
+    }
+
+    log(val) {
+        this.information.push(val);
+        if (this.information.length > this.length) {
+            this.information.splice(0, 1);
         }
     }
 }

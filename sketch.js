@@ -1,14 +1,14 @@
 let debug;
 
 let weather_data;
-let preminute;
+let preminute, presecond;
 
 let aquarium;
 
-let gene_test;
-let dna_test;
-
 let alignSlider, cohesionSlider, separationSlider, findMateSlider;
+
+let wave = [];
+let wave_food = [];
 
 function preload() {
     let url = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWB-0505FC6C-E0E7-4991-9FD4-1D01A8C4E39C&format=JSON&locationName=%E6%96%B0%E7%AB%B9";
@@ -18,21 +18,22 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(windowWidth, windowHeight * 3 / 4);
+    //createCanvas(windowWidth, windowHeight * 3 / 4);
+    createCanvas(1440, 423);
 
-    alignSlider = createSlider(0, 2, 0.8, 0.1);
-    cohesionSlider = createSlider(0, 2, 0.7, 0.1);
+    alignSlider = createSlider(0, 2, 0.5, 0.1);
+    cohesionSlider = createSlider(0, 2, 0.4, 0.1);
     separationSlider = createSlider(0, 2, 0.8, 0.1);
     findMateSlider = createSlider(1, 2, 1, 0.1);
     
     aquarium = new System('aquarium');
     aquarium.addPopulation('CREATURE', CREATURE);
     aquarium.addPopulation('EATER', EATER);
-    aquarium.addAnimal('CREATURE', 50);
+    aquarium.addAnimal('CREATURE', 100);
     aquarium.addAnimal('EATER', floor(random(2, 4)));
     aquarium.addItem('FOOD', [0, 255, 0], 1, true);
     aquarium.addItem('POISON', [255, 0, 0], 1, true);
-    aquarium.addStuff('FOOD', 100);
+    aquarium.addStuff('FOOD', 150);
     aquarium.addStuff('POISON', 10);
     aquarium.addPopulation('CLEANER', CLEANER);
     aquarium.addAnimal('CLEANER', 4);
@@ -47,6 +48,10 @@ function setup() {
     aquarium.addPlant('CORAL', 'CORAL');
     aquarium.addCoral('CORAL', 10);
 
+    aquarium.systemAddLog('CREATURE');
+    aquarium.systemAddLog('FOOD');
+
+    aquarium.showGene('CREATURE', 'FOOD_WEIGHT', 10);
     //aquarium.plant[0].addPlant(10);
 
     //test_coral = new Coral(width / 2, height / 2, 2, 20, 30, color(236, 106, 85));
@@ -57,6 +62,8 @@ function setup() {
 function draw() {
     //background(7, 30, 52);
     aquarium.background();
+
+    aquarium.showGene('CREATURE', 'FOOD_WEIGHT', 10);
 
     aquarium.updateQlist();
 
@@ -75,8 +82,41 @@ function draw() {
     aquarium.showPopulation();
 
     aquarium.systemInformation();
+
+    if (second() != presecond) {
+        aquarium.systemLog('CREATURE');
+        aquarium.systemLog('FOOD', aquarium.item[0].list.length + aquarium.item[3].list.length);
+        wave.push(aquarium.getTotalAnimal());
+        wave_food.push(aquarium.item[0].list.length + aquarium.item[3].list.length);
+    }
+
+    push();
+    translate(500, 30);
+    beginShape();
+    noFill();
+    stroke(255);
+    strokeWeight(2);
+    for (let i = 0; i < wave.length; i++) {
+        vertex(i * 2, height / 2 - wave[i]);
+    }
+    endShape();
+    beginShape();
+    stroke(255, 0, 0);
+    for (let i = 0; i < wave_food.length; i++) {
+        vertex(i * 2, height / 2 - wave_food[i]);
+    }
+    endShape();
+    pop();
+
+    if (wave.length > 250) {
+        wave.splice(0, 1);
+    }
+    if (wave_food.length > 250) {
+        wave_food.splice(0, 1);
+    }
     
     preminute = minute();
+    presecond = second();
 
     /*noFill();
     stroke(0, 200, 0);
