@@ -6,6 +6,7 @@ let preminute, presecond;
 let aquarium;
 
 let alignSlider, cohesionSlider, separationSlider, findMateSlider;
+let resolutionSlider;
 
 let wave = [];
 let wave_food = [];
@@ -25,6 +26,7 @@ function setup() {
     cohesionSlider = createSlider(0, 2, 0.4, 0.1);
     separationSlider = createSlider(0, 2, 0.8, 0.1);
     findMateSlider = createSlider(1, 2, 1, 0.1);
+    resolutionSlider = createSlider(10, 50, 20, 1);
     
     aquarium = new System('aquarium');
     aquarium.addPopulation('CREATURE', CREATURE);
@@ -51,7 +53,7 @@ function setup() {
     aquarium.systemAddLog('CREATURE');
     aquarium.systemAddLog('FOOD');
 
-    aquarium.showGene('CREATURE', 'FOOD_WEIGHT', 10);
+    aquarium.showGene('CREATURE', 'FOOD_PERCEPTION', 40);
     //aquarium.plant[0].addPlant(10);
 
     //test_coral = new Coral(width / 2, height / 2, 2, 20, 30, color(236, 106, 85));
@@ -63,7 +65,7 @@ function draw() {
     //background(7, 30, 52);
     aquarium.background();
 
-    aquarium.showGene('CREATURE', 'FOOD_WEIGHT', 10);
+    aquarium.showGene('CREATURE', 'FOOD_PERCEPTION', resolutionSlider.value());
 
     aquarium.updateQlist();
 
@@ -108,10 +110,10 @@ function draw() {
     endShape();
     pop();
 
-    if (wave.length > 250) {
+    if (wave.length > 150) {
         wave.splice(0, 1);
     }
-    if (wave_food.length > 250) {
+    if (wave_food.length > 150) {
         wave_food.splice(0, 1);
     }
     

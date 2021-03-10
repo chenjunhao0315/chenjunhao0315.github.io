@@ -14,6 +14,9 @@ class System {
     showGene(population_name, gene_name, resolution) {
         for (let pop of this.population) {
             if (pop.name == population_name) {
+                let box_x = width / 1.5;
+                let box_y = height / 2;
+                let box_width = 250;
                 let stage = [];
                 let RawInformation = pop.carrer.dnaPrototype.getRawInformation(gene_name);
                 let offset = pop.carrer.dnaPrototype.getOffset(gene_name);
@@ -33,11 +36,25 @@ class System {
                     stage[index] += 1;
                 }
 
+                let max = Math.max(...stage);
+                let scl = 3;
+                if (max > 30) {
+                    scl /= (1 + 0.03 * (max - 30));
+                }
+
                 for (let i = 0; i < resolution; i++) {
                     stroke(166, 226, 44);
-                    circle(width / 1.5 + i * 10, height / 2, 2);
-                    line(width / 1.5 + i * 10, height / 2, width / 1.5 + i * 10, height / 2 -stage[i] * 3);
+                    circle(box_x + i * (box_width / resolution), box_y, (box_width / 6 / resolution));
+                    line(box_x + i * (box_width / resolution), box_y, box_x + i * (box_width / resolution), box_y - stage[i] * scl);
                 }
+                noStroke();
+                strokeWeight((box_width / 6 / resolution));
+                fill(166, 226, 44);
+                text(low, box_x, box_y + 10);
+                text((low + high) / 2, box_x + (box_width / resolution) * resolution / 2, box_y + 10);
+                text(high, box_x + (box_width / resolution) * (resolution - 1), box_y + 10);
+                //console.log(max);
+                text(max, box_x, box_y - max * scl);
                 return;
             }
         }

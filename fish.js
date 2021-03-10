@@ -50,14 +50,14 @@ class fish {
         let others = aquarium.getQList(name).query(range);
         
         for (let other of others) {
-
-            if (other.data !== this) {
-                let d = this.pos.dist(other.data.pos);
-                if (d < this.radius + other.data.radius) {
-                    if (this.canReproduceWith(other.data, reproduction_rate)) {
-                        this.birthNewChild(name, other.data, mutationRate);
+            let process_data = other.data;
+            if (process_data !== this) {
+                let d = this.pos.dist(process_data.pos);
+                if (d < this.radius + process_data.radius) {
+                    if (this.canReproduceWith(process_data, reproduction_rate)) {
+                        this.birthNewChild(name, process_data, mutationRate);
                     } else {
-                        if (this.reproduceTime < this.reproduceCycle && other.data.sex === 'MALE') {
+                        if (this.reproduceTime < this.reproduceCycle && process_data.sex === 'MALE') {
                             let getaway = new Vector.random2D();
                             getaway.setMag(0.05);
                             this.applyForce(getaway);
@@ -154,13 +154,13 @@ class fish {
         let searchRange = new Circle(this.pos.x, this.pos.y, perceptionRadius);
             
         let founds = null;
-        let action_qlist = qlist;
+ //       let action_qlist = qlist;
 
         if (this.reproduceTime < this.reproduceCycle || this.canReproduce == false || this.health < 0.5) {
             return new Vector(0, 0);
         }
             
-        founds = action_qlist.query(searchRange);
+        founds = qlist.query(searchRange);
 
         //console.log(founds);
             
@@ -378,9 +378,10 @@ class fish {
         let others = list.query(range);
         
         for (let other of others) {
-            let d = this.pos.dist(other.data.pos);
+            let process_data = other.data.pos;
+            let d = this.pos.dist(process_data);
             if (other !== this && d > 0) {
-                let diff = Vector.sub(this.pos, other.data.pos);
+                let diff = Vector.sub(this.pos, process_data);
                 diff.div(d * d);
                 steer.add(diff);
                 total++;
@@ -433,12 +434,17 @@ class fish {
     update() {
         this.vel.add(this.acc);
         this.vel.limit(this.maxSpeed + this.dna.getInformation('SPEED'));
+        let vel = this.vel.mag();
+        
         this.pos.add(this.vel);
         this.acc.mult(0);
-        this.health -= (this.radius * this.radius * this.vel.mag() * this.vel.mag() * this.vel.mag() * this.healthDecrease / 100);
-        //this.health -= this.healthDecrease;
+        let radius = this.radius;
+        let decreaseQuantity = (radius * radius * vel * vel * vel * this.healthDecrease) / 100;
+        decreaseQuantity += (this.dna.getInformation('FOOD_PERCEPTION') + this.dna.getInformation('POISON_PERCEPTION') + this.dna.getInformation('MATE_PERCEPTION') + this.dna.getInformation('FEAR_PERCEPTION')) * this.healthDecrease / 5000;
+        //this.health -= (radius * radius * vel * vel * vel * this.healthDecrease / 100);
+        this.health -= decreaseQuantity;
         this.health = clamp(this.health, 0, 1);
-        this.radius = clamp(this.radius, 0, this.maxRadius);
+        this.radius = clamp(radius, 0, this.maxRadius);
         this.age += 0.025;
         this.reproduceTime += 0.001;
     }
