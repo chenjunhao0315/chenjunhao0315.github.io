@@ -6,7 +6,7 @@ let preminute, presecond;
 let aquarium;
 
 let alignSlider, cohesionSlider, separationSlider, findMateSlider;
-let resolutionSlider;
+let resolutionSlider, geneSelector, populationSelector;
 
 let wave = [];
 let wave_food = [];
@@ -27,6 +27,24 @@ function setup() {
     separationSlider = createSlider(0, 2, 0.8, 0.1);
     findMateSlider = createSlider(1, 2, 1, 0.1);
     resolutionSlider = createSlider(10, 50, 20, 1);
+    populationSelector = createSelect();
+    populationSelector.option('CREATURE');
+    populationSelector.option('EATER');
+    populationSelector.option('CLEANER');
+    populationSelector.option('PROVIDER');
+    geneSelector = createSelect();
+    geneSelector.option('FOOD_WEIGHT');
+    geneSelector.option('POISON_WEIGHT');
+    geneSelector.option('FEAR_WEIGHT');
+    geneSelector.option('MATE_WEIGHT');
+    geneSelector.option('FOOD_PERCEPTION');
+    geneSelector.option('POISON_PERCEPTION');
+    geneSelector.option('MATE_PERCEPTION');
+    geneSelector.option('FEAR_PERCEPTION');
+    geneSelector.option('CHILD_QUANTITY');
+    geneSelector.option('SPEED');
+    geneSelector.option('NONE');
+    
     
     aquarium = new System('aquarium');
     aquarium.addPopulation('CREATURE', CREATURE);
@@ -53,7 +71,7 @@ function setup() {
     aquarium.systemAddLog('CREATURE');
     aquarium.systemAddLog('FOOD');
 
-    aquarium.showGene('CREATURE', 'FOOD_PERCEPTION', 40);
+    //aquarium.showGene('CREATURE', 'FOOD_PERCEPTION', 40);
     //aquarium.plant[0].addPlant(10);
 
     //test_coral = new Coral(width / 2, height / 2, 2, 20, 30, color(236, 106, 85));
@@ -65,7 +83,7 @@ function draw() {
     //background(7, 30, 52);
     aquarium.background();
 
-    aquarium.showGene('CREATURE', 'FOOD_PERCEPTION', resolutionSlider.value());
+    aquarium.showGene(populationSelector.value(), geneSelector.value(), resolutionSlider.value());
 
     aquarium.updateQlist();
 

@@ -12,6 +12,7 @@ class System {
     }
 
     showGene(population_name, gene_name, resolution) {
+        if (gene_name == 'NONE') return;
         for (let pop of this.population) {
             if (pop.name == population_name) {
                 let box_x = width / 1.5;
@@ -21,8 +22,8 @@ class System {
                 let RawInformation = pop.carrer.dnaPrototype.getRawInformation(gene_name);
                 let offset = pop.carrer.dnaPrototype.getOffset(gene_name);
 
-                let low = RawInformation[0] + 3 * offset[0];
-                let high = RawInformation[1] + 3 * offset[1];
+                let low = round(RawInformation[0] + 3 * offset[0], 1);
+                let high = round(RawInformation[1] + 3 * offset[1], 1);
                 let step = (high - low) / resolution;
 
                 for (let i = 0; i < resolution; i++) {
