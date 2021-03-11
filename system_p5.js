@@ -432,6 +432,12 @@ class System {
                 return i.list;
             }
         }
+
+        for (let p of this.plant) {
+            if (p.name == name) {
+                return p.list;
+            }
+        }
         return null;
     }
     

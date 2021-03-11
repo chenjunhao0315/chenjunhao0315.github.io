@@ -1,4 +1,4 @@
-let gene_pool = ['FOOD_WEIGHT', 'POISON_WEIGHT', 'FEAR_WEIGHT', 'MATE_WEIGHT', 'FOOD_PERCEPTION', 'POISON_PERCEPTION', 'MATE_PERCEPTION', 'FEAR_PERCEPTION', 'CHILD_QUANTITY', 'SPEED'];
+let gene_pool = ['FOOD_WEIGHT', 'POISON_WEIGHT', 'FEAR_WEIGHT', 'MATE_WEIGHT', 'FOOD_PERCEPTION', 'POISON_PERCEPTION', 'MATE_PERCEPTION', 'FEAR_PERCEPTION', 'CHILD_QUANTITY', 'SPEED', 'PREY_WEIGHT', 'PREY_PERCEPTION'];
 
 class DNA {
     constructor(dna_prototype, gene_list) {
@@ -118,5 +118,22 @@ let creature_dna_prototype = new Dna_prototype('CREATURE')
     .setGene('MATE_PERCEPTION', [20, 100], [-10, 20])
     .setGene('CHILD_QUANTITY', [10, 20], [-3, 3])
     .setGene('SPEED', [-0.5, 0.5], [-0.1, 0.1])
+    .setGene('PREY_WEIGHT', [0, 0], [0, 0])
+    .setGene('PREY_PERCEPTION', [0, 0], [0, 0])
+
+let eater_dna_prototype = new Dna_prototype('EATER')
+    .setGene('FOOD_WEIGHT', [0.5, 1], [-0.2, 0.2])
+    .setGene('POISON_WEIGHT', [-0.3, -0.8], [-0.2, 0.2])
+    .setGene('FEAR_WEIGHT', [1, 3], [-0.2, 0.2])
+    .setGene('MATE_WEIGHT', [0.1, 0.3], [-0.2, 0.2])
+    .setGene('FOOD_PERCEPTION', [20, 100], [-10, 20])
+    .setGene('POISON_PERCEPTION', [20, 100], [-10, 20])
+    .setGene('FEAR_PERCEPTION', [20, 100], [-10, 20])
+    .setGene('MATE_PERCEPTION', [40, 120], [-10, 20])
+    .setGene('CHILD_QUANTITY', [3, 5], [-1, 1])
+    .setGene('SPEED', [-0.3, 1], [-0.1, 0.1])
+    .setGene('PREY_WEIGHT', [0.5, 1], [-0.2, 0.2])
+    .setGene('PREY_PERCEPTION', [40, 120], [-10, 20])
+
 
 

@@ -605,7 +605,7 @@ class carrer {
         this.dnaPrototype = creature_dna_prototype;
     }
 
-    setDna(dna) {
+    setDnaPrototype(dna) {
         this.dnaPrototype = dna;
         return this;
     }
@@ -703,7 +703,7 @@ let EATER = new carrer('EATER')
     .setMaxRadius(20)
     .setMaxSpeed(1.8)
     .setMaxForce(0.05)
-    .setHealthDecrease(0.001)
+    .setHealthDecrease(0.0008)
     .setColour([0, 191, 255])
     .setNutrition([0.1, 0])
     .addPrey('CREATURE')
@@ -713,6 +713,7 @@ let EATER = new carrer('EATER')
     .setShape('FISH')
     .setRandomR([3, 8])
     .setCanReproduce(true)
+    .setDnaPrototype(eater_dna_prototype)
 
 // CLEANER
 let CLEANER = new carrer('CLEANER')

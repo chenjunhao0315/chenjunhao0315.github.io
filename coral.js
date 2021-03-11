@@ -30,7 +30,7 @@ class Coral {
         for (let i = this.food.length - 1; i >= 0; i--) {
             this.food[i].walk(this);
             if (this.food[i].checkStuck(this.tree)) {
-                if (aquarium.item[3].length < 100) {
+                if (system.getList('CORAL_FOOD').length < 100) {
                     system.addStuff('CORAL_FOOD', 1, this.food[i].pos.x, this.food[i].pos.y);
                 }
                 this.food.splice(i, 1);

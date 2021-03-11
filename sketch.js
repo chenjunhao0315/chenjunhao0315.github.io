@@ -75,7 +75,8 @@ function setup() {
     aquarium.addPopulation('CREATURE', CREATURE);
     aquarium.addPopulation('EATER', EATER);
     aquarium.addAnimal('CREATURE', 100);
-    aquarium.addAnimal('EATER', floor(random(2, 4)));
+    //aquarium.addAnimal('EATER', floor(random(2, 6)));
+    aquarium.addAnimal('EATER', 10);
     aquarium.addItem('FOOD', [0, 255, 0], 1, true);
     aquarium.addItem('POISON', [255, 0, 0], 1, true);
     aquarium.addStuff('FOOD', 150);
@@ -94,6 +95,7 @@ function setup() {
     aquarium.addCoral('CORAL', 10);
 
     aquarium.systemAddLog('CREATURE');
+    aquarium.systemAddLog('EATER');
     aquarium.systemAddLog('FOOD');
 
     //aquarium.showGene('CREATURE', 'FOOD_PERCEPTION', 40);
@@ -132,6 +134,7 @@ function draw() {
     if (second() != presecond) {
         aquarium.systemLog('CREATURE');
         aquarium.systemLog('FOOD', aquarium.item[0].list.length + aquarium.item[3].list.length);
+        aquarium.systemLog('EATER');
         wave.push(aquarium.getTotalAnimal());
         wave_food.push(aquarium.item[0].list.length + aquarium.item[3].list.length);
     }
