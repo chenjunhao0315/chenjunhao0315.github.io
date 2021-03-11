@@ -61,6 +61,10 @@ class fish {
                             let getaway = new Vector.random2D();
                             getaway.setMag(0.05);
                             this.applyForce(getaway);
+                            if (process_data.reproduceTime > process_data.reproduceCycle) {
+                                process_data.reproduceTime = 0;
+                            }
+                            
                         }
                     }
                 }
@@ -440,7 +444,7 @@ class fish {
         this.acc.mult(0);
         let radius = this.radius;
         let decreaseQuantity = (radius * radius * vel * vel * vel * this.healthDecrease) / 100;
-        decreaseQuantity += (this.dna.getInformation('FOOD_PERCEPTION') + this.dna.getInformation('POISON_PERCEPTION') + this.dna.getInformation('MATE_PERCEPTION') + this.dna.getInformation('FEAR_PERCEPTION')) * this.healthDecrease / 5000;
+        decreaseQuantity += (this.dna.getInformation('FOOD_PERCEPTION') + this.dna.getInformation('POISON_PERCEPTION') + this.dna.getInformation('MATE_PERCEPTION') + this.dna.getInformation('FEAR_PERCEPTION')) * this.healthDecrease / 40000;
         //this.health -= (radius * radius * vel * vel * vel * this.healthDecrease / 100);
         this.health -= decreaseQuantity;
         this.health = clamp(this.health, 0, 1);
@@ -692,7 +696,7 @@ let CREATURE = new carrer('CREATURE')
     .addHate('POISON')
     .setShape('FISH')
     .addLike('CORAL_FOOD')
-    .setReproduceCycle(0.5)
+    .setReproduceCycle(0.4)
 
 // EATER
 let EATER = new carrer('EATER')

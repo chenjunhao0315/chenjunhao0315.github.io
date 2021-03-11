@@ -8,19 +8,43 @@ let aquarium;
 let alignSlider, cohesionSlider, separationSlider, findMateSlider;
 let resolutionSlider, geneSelector, populationSelector;
 
+let showLog;
+
 let wave = [];
 let wave_food = [];
+
+/*let gene_canvas = document.querySelector("#gene");
+let gene_ctx = gene_canvas.getContext("2d");
+
+let devicePixelRatio = 3;
+
+// get current size of the canvas
+let rect = gene_canvas.getBoundingClientRect();
+
+// increase the actual size of our canvas
+gene_canvas.width = rect.width * devicePixelRatio;
+gene_canvas.height = rect.height * devicePixelRatio;
+
+// ensure all drawing operations are scaled
+gene_ctx.scale(devicePixelRatio, devicePixelRatio);
+
+// scale everything down using CSS
+gene_canvas.style.width = rect.width + 'px';
+gene_canvas.style.height = rect.height + 'px';*/
+
+let gene_ctx;
+
 
 function preload() {
     let url = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWB-0505FC6C-E0E7-4991-9FD4-1D01A8C4E39C&format=JSON&locationName=%E6%96%B0%E7%AB%B9";
     weather_data = loadJSON(url);
-    
+    //weather_data = loadJSON('assets/weather_data');
     //print(weather_data);
 }
 
 function setup() {
     //createCanvas(windowWidth, windowHeight * 3 / 4);
-    createCanvas(1440, 423);
+    createCanvas(windowWidth, 400);
 
     alignSlider = createSlider(0, 2, 0.5, 0.1);
     cohesionSlider = createSlider(0, 2, 0.4, 0.1);
@@ -33,6 +57,7 @@ function setup() {
     populationSelector.option('CLEANER');
     populationSelector.option('PROVIDER');
     geneSelector = createSelect();
+    geneSelector.option('NONE');
     geneSelector.option('FOOD_WEIGHT');
     geneSelector.option('POISON_WEIGHT');
     geneSelector.option('FEAR_WEIGHT');
@@ -43,7 +68,7 @@ function setup() {
     geneSelector.option('FEAR_PERCEPTION');
     geneSelector.option('CHILD_QUANTITY');
     geneSelector.option('SPEED');
-    geneSelector.option('NONE');
+    
     
     
     aquarium = new System('aquarium');
@@ -77,13 +102,14 @@ function setup() {
     //test_coral = new Coral(width / 2, height / 2, 2, 20, 30, color(236, 106, 85));
     
     debug = createCheckbox();
+    showLog = createCheckbox();
 }
 
 function draw() {
     //background(7, 30, 52);
     aquarium.background();
 
-    aquarium.showGene(populationSelector.value(), geneSelector.value(), resolutionSlider.value());
+    aquarium.showGene(gene_ctx, populationSelector.value(), geneSelector.value(), resolutionSlider.value());
 
     aquarium.updateQlist();
 
@@ -110,7 +136,11 @@ function draw() {
         wave_food.push(aquarium.item[0].list.length + aquarium.item[3].list.length);
     }
 
-    push();
+    if (showLog.checked()) {
+        aquarium.showSystemLog(500, 30);
+    }
+
+    /*push();
     translate(500, 30);
     beginShape();
     noFill();
@@ -126,7 +156,7 @@ function draw() {
         vertex(i * 2, height / 2 - wave_food[i]);
     }
     endShape();
-    pop();
+    pop();*/
 
     if (wave.length > 150) {
         wave.splice(0, 1);

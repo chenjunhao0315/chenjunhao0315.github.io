@@ -7,17 +7,18 @@ class System {
         this.field = [];
         this.weather = new Weather();
         this.property = new Property();
-        this.time = second();
+        this.time = new Date().getSeconds();
         this.log = [];
     }
 
-    showGene(population_name, gene_name, resolution) {
+    showGene(ctx, population_name, gene_name, resolution) {
         if (gene_name == 'NONE') return;
         for (let pop of this.population) {
             if (pop.name == population_name) {
                 let box_x = width / 1.5;
                 let box_y = height / 2;
                 let box_width = 250;
+
                 let stage = [];
                 let RawInformation = pop.carrer.dnaPrototype.getRawInformation(gene_name);
                 let offset = pop.carrer.dnaPrototype.getOffset(gene_name);
@@ -25,6 +26,9 @@ class System {
                 let low = round(RawInformation[0] + 3 * offset[0], 1);
                 let high = round(RawInformation[1] + 3 * offset[1], 1);
                 let step = (high - low) / resolution;
+
+                let start_x = (300 - (200 / resolution) * (resolution - 1)) / 2;
+                let start_y = 250;
 
                 for (let i = 0; i < resolution; i++) {
                     stage.push(0);
@@ -43,19 +47,56 @@ class System {
                     scl /= (1 + 0.03 * (max - 30));
                 }
 
+                ctx.fillStyle = "rgb(7, 30, 52)";
+                ctx.fillRect(0, 0, 300, 300);
+
                 for (let i = 0; i < resolution; i++) {
-                    stroke(166, 226, 44);
+                    ctx.beginPath();
+                    ctx.fillStyle = "rgb(166, 226, 44)";
+                    ctx.strokeStyle = "rgb(166, 226, 44)";
+                    ctx.arc(start_x + i * (200 / resolution), start_y, 200 / 6 / resolution, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.closePath();
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = "round";
+                    ctx.strokeStyle = "rgb(166, 226, 44)";
+                    ctx.translate(start_x + i * (200 / resolution), start_y);
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(0, -stage[i] * scl);
+                    ctx.stroke();
+                    ctx.closePath();
+                    ctx.restore();
+                    
+
+                    /*stroke(166, 226, 44);
                     circle(box_x + i * (box_width / resolution), box_y, (box_width / 6 / resolution));
-                    line(box_x + i * (box_width / resolution), box_y, box_x + i * (box_width / resolution), box_y - stage[i] * scl);
+                    line(box_x + i * (box_width / resolution), box_y, box_x + i * (box_width / resolution), box_y - stage[i] * scl);*/
                 }
-                noStroke();
+
+                ctx.font = 12 + "px Georgia";
+                ctx.beginPath();
+                ctx.fillStyle = "rgb(166, 226, 44)";
+                ctx.textAlign = 'center';
+                ctx.fillText(low, start_x, 265);
+                ctx.fillText((low + high) / 2, start_x + (200 / resolution) * resolution / 2, 265);
+                ctx.fillText(high, start_x + (200 / resolution) * (resolution - 1), 265);
+                ctx.fillText(max, start_x, start_y - max * scl);
+                ctx.fill();
+                ctx.closePath();
+
+
+                /*noStroke();
                 strokeWeight((box_width / 6 / resolution));
                 fill(166, 226, 44);
                 text(low, box_x, box_y + 10);
                 text((low + high) / 2, box_x + (box_width / resolution) * resolution / 2, box_y + 10);
                 text(high, box_x + (box_width / resolution) * (resolution - 1), box_y + 10);
                 //console.log(max);
-                text(max, box_x, box_y - max * scl);
+                text(max, box_x, box_y - max * scl);*/
                 return;
             }
         }
@@ -114,7 +155,7 @@ class System {
         textFont('Georgia');
         // information box
         fill(7, 30, 52, 192);
-        rect(box_x, box_y, box_x + box_width, box_y + box_height, 15);
+        //rect(box_x, box_y, box_x + box_width, box_y + box_height, 15);
 
         fill(0, 191, 255);
         for (let i  = 0; i < list.length; i++) {
@@ -747,7 +788,7 @@ class Property {
         this.reproduction_rate = 0.5;
         this.mutation_rate = 0.01;
         this.temp = [20, 26];
-        this.colour = [color(7, 30, 52), color(9, 40, 69), color(7, 30, 52)];
+        this.colour = [[7, 30, 52], [9, 40, 69], [7, 30, 52]];
     }
 
     setTemp(low, high) {
