@@ -19,6 +19,7 @@ class fish {
         this.healthDecrease = carrer.healthDecrease || 0.003;
         this.Foodnutrition = carrer.Foodnutrition || 0.5;
         this.Poisonnutrition = carrer.Poisonnutrition || -0.4;
+        this.Preynutrition = carrer.Preynutrition || 0.3;
         this.colour = carrer.colour;
         this.canReproduce = carrer.canReproduce || false;
         this.reproduceCycle = carrer.reproduceCycle;
@@ -246,8 +247,8 @@ class fish {
                 let d = this.pos.dist(food.data.pos);
                 if (d < this.radius && this.radius > food.data.radius) {
                     system.killAnimal(prey, food.index);
-                    this.health += 0.5;
-                    this.radius += 0.1;
+                    this.health += this.Preynutrition;
+                    this.radius += this.Preynutrition;
                 } else {
                     if (d < record) {
                         record = d;
@@ -605,6 +606,11 @@ class carrer {
         this.dnaPrototype = creature_dna_prototype;
     }
 
+    setPreynutrition(val) {
+        this.Preynutrition = val;
+        return this;
+    }
+
     setDnaPrototype(dna) {
         this.dnaPrototype = dna;
         return this;
@@ -714,6 +720,7 @@ let EATER = new carrer('EATER')
     .setRandomR([3, 8])
     .setCanReproduce(true)
     .setDnaPrototype(eater_dna_prototype)
+    .setPreynutrition(0.7)
 
 // CLEANER
 let CLEANER = new carrer('CLEANER')

@@ -85,7 +85,7 @@ function setup() {
     aquarium.addAnimal('CLEANER', 4);
     aquarium.addPopulation('PROVIDER', PROVIDER);
     aquarium.addAnimal('PROVIDER', 4);
-    aquarium.addItem('BODY', [255, 255, 0], 1, true);
+    aquarium.addItem('BODY', [255, 255, 0], 1, false);
     aquarium.addField('WIND', height);
     aquarium.addField('WATER', 20);
     aquarium.updateWeather(weather_data);
