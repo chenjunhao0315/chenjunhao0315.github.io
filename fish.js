@@ -245,7 +245,7 @@ class fish {
             
             for (let food of founds) {
                 let d = this.pos.dist(food.data.pos);
-                if (d < this.radius && this.radius > food.data.radius) {
+                if (d < this.radius && this.radius > food.data.radius && this.health < 0.9) {
                     system.killAnimal(prey, food.index);
                     this.health += this.Preynutrition;
                     this.radius += this.Preynutrition;
@@ -284,7 +284,7 @@ class fish {
         for (let other of others) {
             const target = new Vector(other.x, other.y);
             const distance = this.pos.dist(target);
-            if (distance < 2 + this.radius) {
+            if (distance < 2 + this.radius && this.health < 0.9) {
                 system.deleteStuff(name, other.index);
                 this.health += nutrition;
                 this.radius += nutrition;
