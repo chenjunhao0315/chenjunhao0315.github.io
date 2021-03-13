@@ -140,7 +140,7 @@ function draw() {
     }
 
     if (showLog.checked()) {
-        aquarium.showSystemLog(500, 30);
+        aquarium.showSystemLog(width / 2.5, height / 2);
     }
 
     /*push();

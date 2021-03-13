@@ -586,14 +586,14 @@ class System {
             if (pop.carrer.canReproduce) {
                 for (let indiviual of pop.list) {
                     if (this.getTotalAnimal() < this.property.max_creature) {
-                        indiviual.reproduce(pop.name, this.property.mutation_rate, this.property.reproduction_rate);
+                        indiviual.reproduce(pop.name, pop.carrer.dnaPrototype, this.property.mutation_rate, this.property.reproduction_rate);
                     } 
                 }
             }
             if (pop.carrer.canProvide) {
                 for (let indiviual of pop.list) {
                     if (random(1) < this.property.provide_rate) {
-                        //aquarium.addStuff('FOOD', 1, indiviual.pos.x, indiviual.pos.y);
+                        aquarium.addStuff('FOOD', 1, indiviual.pos.x, indiviual.pos.y);
                     }
                 }
             }
@@ -654,7 +654,7 @@ class System {
     
     populationcontrol() {
         if (second() != this.time && this.item[0].list.length < 150) {
-            this.addStuff('FOOD', 6);
+            this.addStuff('FOOD', 4);
         }
         this.time = second();
         if (random(1) < this.property.provide_rate) {
@@ -698,10 +698,14 @@ class Log {
         let scl = 1;
         if (max > 100) {
             scl = 1 / (1 + 0.01 * (max - 100));
+        } else if (max < 30) {
+            scl = 3.33 / (1 + 0.03 * (30 - max));
         }
 
+        let step = 350 / this.length;
+
         for (let i = 0; i < this.information.length; i++) {
-            vertex(i * 2, height / 2 - this.information[i] * scl);
+            vertex(i * step, - this.information[i] * scl);
         }
         endShape();
         pop();
@@ -728,7 +732,7 @@ class population {
     update(system) {
         for (let i = 0; i < this.list.length; i++) {
             this.list[i].boundaries();
-            this.list[i].applyFlock(this.qlist);
+            //this.list[i].applyFlock(this.qlist);
             this.list[i].behavior(system, this.qlist);
             this.list[i].update();
             if (this.list[i].isDead()) {

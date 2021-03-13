@@ -5,7 +5,7 @@ class fish {
         this.vel.setMag(2);
         this.acc = new Vector(0, 0);
         
-        this.carrer = carrer;
+        //this.carrer = carrer;
         this.fear = carrer.fear;
         this.prey = carrer.prey;
         this.like = carrer.like || 'FOOD';
@@ -42,7 +42,7 @@ class fish {
         }
     }
     
-    reproduce(name, mutationRate, reproduction_rate) {  
+    reproduce(name, dnaPrototype, mutationRate, reproduction_rate) {  
         if (this.sex === 'MALE') {
             return;
         } 
@@ -56,7 +56,7 @@ class fish {
                 let d = this.pos.dist(process_data.pos);
                 if (d < this.radius + process_data.radius) {
                     if (this.canReproduceWith(process_data, reproduction_rate)) {
-                        this.birthNewChild(name, process_data, mutationRate);
+                        this.birthNewChild(name, process_data, mutationRate, dnaPrototype);
                     } else {
                         if (this.reproduceTime < this.reproduceCycle && process_data.sex === 'MALE') {
                             let getaway = new Vector.random2D();
@@ -73,7 +73,7 @@ class fish {
         }
     }
     
-    birthNewChild(name, parent, mutationRate) {
+    birthNewChild(name, parent, mutationRate, dnaPrototype) {
         let child_quantity = (this.dna.getInformation('CHILD_QUANTITY') + parent.dna.getInformation('CHILD_QUANTITY')) / 2;
 
         this.child += child_quantity;
@@ -85,8 +85,7 @@ class fish {
             let x = this.pos.x + random(this.vel.x, parent.vel.x);
             let y = this.pos.y + random(this.vel.y, parent.vel.y);
             let new_DNA = this.dna.crossover(parent.dna, this.age, parent.age);
-            new_DNA.mutate(this.carrer.dnaPrototype, mutationRate);
-            //let new_DNA = this.crossoverDNA(parent, mutationRate);
+            new_DNA.mutate(dnaPrototype, mutationRate);
             aquarium.addAnimal(name, 1, x, y, 5, new_DNA);
         }
     }
@@ -103,7 +102,7 @@ class fish {
         return (isAdult && !isSameGender && isHealthy && isAge && isCycle && isRate);
     }
     
-    behavior(system, qlist) {
+    behavior(system, self_qlist) {
         let steerFood = new Vector(0, 0);
         let steerPoison = new Vector(0, 0);
         
@@ -136,10 +135,16 @@ class fish {
 
         let steerMate = new Vector(0, 0);
 
-        //if (this.reproduceTime > 2 * this.reproduceCycle && this.canReproduce) {
-        steerMate = this.findMate(system, qlist, (this.dna.getInformation('MATE_PERCEPTION') * this.reproduceTime / this.reproduceCycle));
-        //}
+        steerMate = this.findMate(system, self_qlist, (this.dna.getInformation('MATE_PERCEPTION') * this.reproduceTime / this.reproduceCycle));
         steerMate.mult(this.dna.getInformation('MATE_WEIGHT') * (this.reproduceTime / this.reproduceCycle) * findMateSlider.value());
+
+        let separation = this.separation(self_qlist);
+        let aligment = this.aligment(self_qlist);
+        let cohesion = this.cohesion(self_qlist);
+        
+        this.applyForce(separation.mult(separationSlider.value()));
+        this.applyForce(aligment.mult(alignSlider.value()));
+        this.applyForce(cohesion.mult(cohesionSlider.value()));
         
         this.applyForce(steerFood);
         this.applyForce(steerPoison);
@@ -159,7 +164,6 @@ class fish {
         let searchRange = new Circle(this.pos.x, this.pos.y, perceptionRadius);
             
         let founds = null;
- //       let action_qlist = qlist;
 
         if (this.reproduceTime < this.reproduceCycle || this.canReproduce == false || this.health < 0.5) {
             return new Vector(0, 0);
@@ -325,13 +329,13 @@ class fish {
         this.applyForce(cohesion.mult(cohesionSlider.value()));
     }
     
-    cohesion(list) {
+    cohesion(q_list) {
         let neighbor_distance = 30;
         let steer = new Vector(0, 0);
         let total = 0;
         
         let range = new Circle(this.pos.x, this.pos.y, neighbor_distance);
-        let others = list.query(range);
+        let others = q_list.query(range);
         
         for (let other of others) {
             if (other !== this) {
@@ -350,13 +354,13 @@ class fish {
         return steer;
       }
     
-    aligment(list) {
+    aligment(q_list) {
         let neighbor_distance = 50;
         let steer = new Vector(0, 0);
         let total = 0;
         
         let range = new Circle(this.pos.x, this.pos.y, neighbor_distance);
-        let others = list.query(range);
+        let others = q_list.query(range);
         
         for (let other of others) {
             if (other !== this) {
@@ -374,13 +378,13 @@ class fish {
         return steer;
     }
     
-    separation(list) {
+    separation(q_list) {
         let separationRadius = this.radius * this.radius / 2;
         let steer = new Vector(0, 0);
         let total = 0;
         
         let range = new Circle(this.pos.x, this.pos.y, separationRadius);
-        let others = list.query(range);
+        let others = q_list.query(range);
         
         for (let other of others) {
             let process_data = other.data.pos;
