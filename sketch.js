@@ -10,9 +10,6 @@ let resolutionSlider, geneSelector, populationSelector;
 
 let showLog;
 
-let wave = [];
-let wave_food = [];
-
 /*let gene_canvas = document.querySelector("#gene");
 let gene_ctx = gene_canvas.getContext("2d");
 
@@ -46,9 +43,9 @@ function setup() {
     //createCanvas(windowWidth, windowHeight * 3 / 4);
     createCanvas(windowWidth, 400);
 
-    alignSlider = createSlider(0, 2, 0.5, 0.1);
-    cohesionSlider = createSlider(0, 2, 0.4, 0.1);
-    separationSlider = createSlider(0, 2, 0.8, 0.1);
+    alignSlider = createSlider(0, 2, 1, 0.1);
+    cohesionSlider = createSlider(0, 2, 1, 0.1);
+    separationSlider = createSlider(0, 2, 1, 0.1);
     findMateSlider = createSlider(1, 2, 1, 0.1);
     resolutionSlider = createSlider(10, 50, 20, 1);
     populationSelector = createSelect();
@@ -73,10 +70,10 @@ function setup() {
     
     aquarium = new System('aquarium');
     aquarium.addPopulation('CREATURE', CREATURE);
-    aquarium.addPopulation('EATER', EATER);
-    aquarium.addAnimal('CREATURE', 100);
+    aquarium.addPopulation('EATER', EATER, [0.1, 0.1, 0.1]);
+    aquarium.addAnimal('CREATURE', floor(width / 12));
     //aquarium.addAnimal('EATER', floor(random(2, 6)));
-    aquarium.addAnimal('EATER', 10);
+    aquarium.addAnimal('EATER', 4);
     aquarium.addItem('FOOD', [0, 255, 0], 1, true);
     aquarium.addItem('POISON', [255, 0, 0], 1, true);
     aquarium.addStuff('FOOD', 150);
@@ -94,9 +91,10 @@ function setup() {
     aquarium.addPlant('CORAL', 'CORAL');
     aquarium.addCoral('CORAL', 10);
 
-    aquarium.systemAddLog('CREATURE');
-    aquarium.systemAddLog('EATER');
-    aquarium.systemAddLog('FOOD');
+    aquarium.systemAddLog('CREATURE', 500);
+    aquarium.systemAddLog('EATER', 500);
+    aquarium.systemAddLog('FOOD', 500);
+    aquarium.systemAddLog('POISON', 500);
 
     //aquarium.showGene('CREATURE', 'FOOD_PERCEPTION', 40);
     //aquarium.plant[0].addPlant(10);
@@ -135,8 +133,7 @@ function draw() {
         aquarium.systemLog('CREATURE');
         aquarium.systemLog('FOOD', aquarium.item[0].list.length + aquarium.item[3].list.length);
         aquarium.systemLog('EATER');
-        wave.push(aquarium.getTotalAnimal());
-        wave_food.push(aquarium.item[0].list.length + aquarium.item[3].list.length);
+        aquarium.systemLog('POISON');
     }
 
     if (showLog.checked()) {
@@ -160,13 +157,6 @@ function draw() {
     }
     endShape();
     pop();*/
-
-    if (wave.length > 150) {
-        wave.splice(0, 1);
-    }
-    if (wave_food.length > 150) {
-        wave_food.splice(0, 1);
-    }
     
     preminute = minute();
     presecond = second();

@@ -102,7 +102,7 @@ class fish {
         return (isAdult && !isSameGender && isHealthy && isAge && isCycle && isRate);
     }
     
-    behavior(system, self_qlist) {
+    behavior(system, self_qlist, flock) {
         let steerFood = new Vector(0, 0);
         let steerPoison = new Vector(0, 0);
         
@@ -142,9 +142,9 @@ class fish {
         let aligment = this.aligment(self_qlist);
         let cohesion = this.cohesion(self_qlist);
         
-        this.applyForce(separation.mult(separationSlider.value()));
-        this.applyForce(aligment.mult(alignSlider.value()));
-        this.applyForce(cohesion.mult(cohesionSlider.value()));
+        this.applyForce(separation.mult(flock[2]));
+        this.applyForce(aligment.mult(flock[1]));
+        this.applyForce(cohesion.mult(flock[0]));
         
         this.applyForce(steerFood);
         this.applyForce(steerPoison);
@@ -249,7 +249,7 @@ class fish {
             
             for (let food of founds) {
                 let d = this.pos.dist(food.data.pos);
-                if (d < this.radius && this.radius > food.data.radius && this.health < 0.9) {
+                if (d < this.radius && this.radius > food.data.radius) {
                     system.killAnimal(prey, food.index);
                     this.health += this.Preynutrition;
                     this.radius += this.Preynutrition;
@@ -721,7 +721,7 @@ let EATER = new carrer('EATER')
     .addLike('FOOD')
     .addHate('POISON')
     .setShape('FISH')
-    .setRandomR([3, 8])
+    .setRandomR([6, 8])
     .setCanReproduce(true)
     .setDnaPrototype(eater_dna_prototype)
     .setPreynutrition(0.7)

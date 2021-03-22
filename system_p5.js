@@ -114,10 +114,18 @@ class System {
         let stage = 0;
 
         if (name === undefined) {
+            let label_y = start_y - 100 - 10 * this.log.length;
+
             for (let log of this.log) {
                 showcolor = lerpColor(color2, color1, stage);
+                let string_width = textWidth(log.name);
+
+                fill(showcolor);
+                circle(start_x, label_y, 3);
+                text(log.name, start_x + string_width / 2 + 3, label_y);
                 log.show(start_x, start_y, showcolor);
                 stage += step;
+                label_y += 10;
             }
         } else {
             for (let log of this.log) {
@@ -593,7 +601,7 @@ class System {
             if (pop.carrer.canProvide) {
                 for (let indiviual of pop.list) {
                     if (random(1) < this.property.provide_rate) {
-                        aquarium.addStuff('FOOD', 1, indiviual.pos.x, indiviual.pos.y);
+                        //aquarium.addStuff('FOOD', 1, indiviual.pos.x, indiviual.pos.y);
                     }
                 }
             }
@@ -692,7 +700,8 @@ class Log {
         beginShape();
         noFill();
         stroke(color);
-        strokeWeight(2);
+        let line_width = clamp(500 / this.length, 1, 2);
+        strokeWeight(line_width);
 
         let max = Math.max(...this.information);
         let scl = 1;
@@ -702,7 +711,7 @@ class Log {
             scl = 3.33 / (1 + 0.03 * (30 - max));
         }
 
-        let step = 350 / this.length;
+        let step = 250 / (this.information.length + 1);
 
         for (let i = 0; i < this.information.length; i++) {
             vertex(i * step, - this.information[i] * scl);
@@ -720,9 +729,10 @@ class Log {
 }
 
 class population {
-    constructor(name, carrer) {
+    constructor(name, carrer, flock) {
         this.name = name;
         this.carrer = carrer;
+        this.flock = flock || [0.5, 0.4, 0.8];
         this.boundary = new Rectangle(width / 2, height / 2, width, height);
         this.list = [];
         this.qlist = new QuadTree(this.boundary, 4);
@@ -733,7 +743,7 @@ class population {
         for (let i = 0; i < this.list.length; i++) {
             this.list[i].boundaries();
             //this.list[i].applyFlock(this.qlist);
-            this.list[i].behavior(system, this.qlist);
+            this.list[i].behavior(system, this.qlist, this.flock);
             this.list[i].update();
             if (this.list[i].isDead()) {
                 if (this.list[i].radius > 10) {
