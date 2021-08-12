@@ -1,11 +1,9 @@
-let saveButton;
-let clearButton;
-
 let img;
 let meteor = [];
-let scale;
 let from;
 let to;
+let img_width;
+let img_height;
 
 function preload() {
 	img = loadImage('https://raw.githubusercontent.com/chenjunhao0315/data_structure/main/star.jpg');
@@ -13,11 +11,11 @@ function preload() {
 
 function setup() {
    createCanvas(windowWidth, windowHeight);
-   let img_width = img.width;
-   img.resize(windowWidth, 0);
-   let img_resize_width = img.width;
-   scale = img_resize_width / img_width;
-   image(img, 0, 0);
+   
+   img.resize(0, windowHeight);
+   img_height = img.height;
+   img_width = img.width;
+   image(img, (windowWidth - img_width) / 2, 0);
    meteor.push(new Meteor);
    from = color(255, 255, 255);
    to = color(102, 255, 230);
@@ -25,7 +23,8 @@ function setup() {
 }
 
 function draw() {
-	image(img, 0, 0);
+	background('rgb(11, 11, 11)');
+	image(img, (windowWidth - img_width) / 2, 0);
 	if (random() < 0.05) {
 		meteor.push(new Meteor);
 	}
@@ -42,7 +41,7 @@ function draw() {
 
 class Meteor {
 	constructor() {
-		this.center = createVector(windowWidth / 2, img.height * scale / 2);
+		this.center = createVector(img.width / 2 + (windowWidth - img_width) / 2, img.height / 2);
 		this.vel = p5.Vector.random2D();
 		this.pos = this.center.copy().add(this.vel.copy().mult(random(150, 300)));
 		this.vel.mult(random(30, 90));
