@@ -63,16 +63,16 @@ class Meteor {
 	}
 	
 	calculateSize() {
-		return map(abs(this.age - 10), 0, 20, this.size, 0);
+		return map(abs(this.age - 9), 0, 15, this.size * 1.3, 0);
 	}
 	
 	show() {
-		fill(lerpColor(from, to, this.color), map(this.vel.mag(), 0, 100, 0, 255) + map(abs(this.age - 10), 0, 20, 50, 0));
+		fill(lerpColor(from, to, this.color), map(this.vel.mag(), 0, 100, 0, 255) + map(abs(this.age - 9), 0, 20, 50, 0));
 		noStroke();
 		ellipse(this.pos.x, this.pos.y, this.calculateSize(), this.calculateSize());
 		strokeWeight(this.calculateSize());
 		let prev = this.pos.copy().sub(this.vel.copy().mult(2));
-		stroke(lerpColor(from, to, this.color), map(this.vel.mag(), 0, 100, 0, 255) + map(abs(this.age - 10), 0, 20, 50, 0));
+		stroke(lerpColor(from, to, this.color), map(this.vel.mag(), 0, 100, 0, 255) + map(abs(this.age - 9), 0, 20, 50, 0));
 		line(prev.x, prev.y, this.pos.x, this.pos.y);
 	}
 }
