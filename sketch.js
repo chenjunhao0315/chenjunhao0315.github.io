@@ -1,193 +1,141 @@
-let debug;
-
-let weather_data;
-let preminute, presecond;
-
-let aquarium;
-
-let alignSlider, cohesionSlider, separationSlider, findMateSlider;
-let resolutionSlider, geneSelector, populationSelector;
-
-let showLog;
-
-/*let gene_canvas = document.querySelector("#gene");
-let gene_ctx = gene_canvas.getContext("2d");
-
-let devicePixelRatio = 3;
-
-// get current size of the canvas
-let rect = gene_canvas.getBoundingClientRect();
-
-// increase the actual size of our canvas
-gene_canvas.width = rect.width * devicePixelRatio;
-gene_canvas.height = rect.height * devicePixelRatio;
-
-// ensure all drawing operations are scaled
-gene_ctx.scale(devicePixelRatio, devicePixelRatio);
-
-// scale everything down using CSS
-gene_canvas.style.width = rect.width + 'px';
-gene_canvas.style.height = rect.height + 'px';*/
-
-let gene_ctx;
-
-
-function preload() {
-    let url = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWB-0505FC6C-E0E7-4991-9FD4-1D01A8C4E39C&format=JSON&locationName=%E6%96%B0%E7%AB%B9";
-    weather_data = loadJSON(url);
-    //weather_data = loadJSON('assets/weather_data');
-    //print(weather_data);
-}
+let g;
+let man;
+let ball_list = [];
+let score = 0;
 
 function setup() {
-    //createCanvas(windowWidth, windowHeight * 3 / 4);
-    createCanvas(windowWidth, 400);
-
-    alignSlider = createSlider(0, 2, 1, 0.1);
-    cohesionSlider = createSlider(0, 2, 1, 0.1);
-    separationSlider = createSlider(0, 2, 1, 0.1);
-    findMateSlider = createSlider(1, 2, 1, 0.1);
-    resolutionSlider = createSlider(10, 50, 20, 1);
-    populationSelector = createSelect();
-    populationSelector.option('CREATURE');
-    populationSelector.option('EATER');
-    populationSelector.option('CLEANER');
-    populationSelector.option('PROVIDER');
-    geneSelector = createSelect();
-    geneSelector.option('NONE');
-    geneSelector.option('FOOD_WEIGHT');
-    geneSelector.option('POISON_WEIGHT');
-    geneSelector.option('FEAR_WEIGHT');
-    geneSelector.option('MATE_WEIGHT');
-    geneSelector.option('FOOD_PERCEPTION');
-    geneSelector.option('POISON_PERCEPTION');
-    geneSelector.option('MATE_PERCEPTION');
-    geneSelector.option('FEAR_PERCEPTION');
-    geneSelector.option('CHILD_QUANTITY');
-    geneSelector.option('SPEED');
-    
-    
-    
-    aquarium = new System('aquarium');
-    aquarium.addPopulation('CREATURE', CREATURE);
-    aquarium.addPopulation('EATER', EATER, [0.1, 0.1, 0.1]);
-    aquarium.addAnimal('CREATURE', floor(width / 12));
-    //aquarium.addAnimal('EATER', floor(random(2, 6)));
-    aquarium.addAnimal('EATER', 4);
-    aquarium.addItem('FOOD', [0, 255, 0], 1, true);
-    aquarium.addItem('POISON', [255, 0, 0], 1, true);
-    aquarium.addStuff('FOOD', 150);
-    aquarium.addStuff('POISON', 10);
-    aquarium.addPopulation('CLEANER', CLEANER);
-    aquarium.addAnimal('CLEANER', 4);
-    aquarium.addPopulation('PROVIDER', PROVIDER);
-    aquarium.addAnimal('PROVIDER', 4);
-    aquarium.addItem('BODY', [255, 255, 0], 1, false);
-    aquarium.addField('WIND', height);
-    aquarium.addField('WATER', 20);
-    aquarium.updateWeather(weather_data);
-
-    aquarium.addItem('CORAL_FOOD', [255, 0, 255], 1, false);
-    aquarium.addPlant('CORAL', 'CORAL');
-    aquarium.addCoral('CORAL', 10);
-
-    aquarium.systemAddLog('CREATURE', 500);
-    aquarium.systemAddLog('EATER', 500);
-    aquarium.systemAddLog('FOOD', 500);
-    aquarium.systemAddLog('POISON', 500);
-
-    //aquarium.showGene('CREATURE', 'FOOD_PERCEPTION', 40);
-    //aquarium.plant[0].addPlant(10);
-
-    //test_coral = new Coral(width / 2, height / 2, 2, 20, 30, color(236, 106, 85));
-    
-    debug = createCheckbox();
-    showLog = createCheckbox();
+  createCanvas(windowWidth, windowHeight);
+  g = createVector(0, 0.2);
+  man = new Man;
+  ball_list.push(new Ball("food", getRandomPos(ball_list, man)));
+  ball_list.push(new Ball("poison", getRandomPos(ball_list, man)));
+  textSize(32);
+  textAlign(CENTER, CENTER);
 }
 
 function draw() {
-    //background(7, 30, 52);
-    aquarium.background();
-
-    aquarium.showGene(gene_ctx, populationSelector.value(), geneSelector.value(), resolutionSlider.value());
-
-    aquarium.updateQlist();
-
-    aquarium.populationcontrol();
-    if (preminute != minute()) {
-        aquarium.environmentcontrol(weather_data);
-    }
-
-    aquarium.updatePlant();
-    aquarium.showPlant();
-
-    aquarium.updateItem();
-    aquarium.showItem();
-
-    aquarium.updatePopulation();
-    aquarium.showPopulation();
-
-    aquarium.systemInformation();
-
-    if (second() != presecond) {
-        aquarium.systemLog('CREATURE');
-        aquarium.systemLog('FOOD', aquarium.item[0].list.length + aquarium.item[3].list.length);
-        aquarium.systemLog('EATER');
-        aquarium.systemLog('POISON');
-    }
-
-    if (showLog.checked()) {
-        aquarium.showSystemLog(width / 2.5, height / 2);
-    }
-
-    /*push();
-    translate(500, 30);
-    beginShape();
-    noFill();
-    stroke(255);
-    strokeWeight(2);
-    for (let i = 0; i < wave.length; i++) {
-        vertex(i * 2, height / 2 - wave[i]);
-    }
-    endShape();
-    beginShape();
-    stroke(255, 0, 0);
-    for (let i = 0; i < wave_food.length; i++) {
-        vertex(i * 2, height / 2 - wave_food[i]);
-    }
-    endShape();
-    pop();*/
-    
-    preminute = minute();
-    presecond = second();
-
-    /*noFill();
-    stroke(0, 200, 0);
-    strokeWeight(1);
-    circle(mouseX, mouseY, 50);*/
-}
-
-function clamp(value, min, max) {
-  if (value >= max) {
-    return max;
-  } else if (value <= min) {
-    return min;
+  background(0);
+  fill(255);
+  text(score, 32, 32);
+  man.update();
+  let status = man.check(ball_list);
+  if (status <= 0)
+    noLoop();
+  else if (status == 1) {
+    score++;
+    ball_list.push(new Ball("food", getRandomPos(ball_list, man)));
+    ball_list.push(new Ball("poison", getRandomPos(ball_list, man)));  
   }
-  return value;
+
+  man.show();
+  for (let ball of ball_list)
+    ball.show();
 }
 
-function maximum(value1, value2) {
-    if (value2 > value1) {
-        return value2;
+class Man {
+  constructor() {
+    this.pos = createVector(windowWidth / 2, windowHeight / 2);
+    this.vel = createVector(0, 0);
+  }
+
+  update() {
+    this.pos = this.pos.add(this.vel.add(g));
+  }
+
+  check(ball_list) {
+    if (this.pos.x < 0 || this.pos.x > windowWidth || this.pos.y < 0 || this.pos.y > windowHeight)
+        return -1;
+    for (let i = ball_list.length - 1; i >= 0; --i) {
+      if (this.pos.dist(ball_list[i].pos) < 20) {
+        if (ball_list[i].type == "food") {
+          ball_list.splice(i, 1);
+          return 1;
+        }
+        else {
+          return 0;
+        }
+      }
     }
-    return value1;
-}
-
-function mousePressed() {
-    for (let i = 0; i < 10; i++) {
-        let x = mouseX + random(-25, 25);
-        let y = mouseY + random(-25, 25);
-        aquarium.addStuff('FOOD', 1, x, y);
+    for (let ball of ball_list) {
+      if (this.pos.dist(ball.pos) < 20) {
+        if (ball.type == "food")
+          return 1;
+        else {
+          return 0;
+        }
+      }
     }
+    return 2;
+  }
+
+  show() {
+    noStroke();
+    fill(255);
+    ellipse(this.pos.x, this.pos.y, 30, 30);
+  }
+
 }
 
+class Ball {
+  constructor(type, pos) {
+    this.type = type;
+    this.pos = pos;
+  }
+
+  show() {
+    noStroke();
+    if (this.type == "food") {
+      fill(0, 255, 0);
+      ellipse(this.pos.x, this.pos.y, 10, 10);
+    } else if (this.type == "poison") {
+      fill(255, 0, 0);
+      ellipse(this.pos.x, this.pos.y, 10, 10);
+    }
+  }
+}
+
+function keyPressed() {
+  if (keyCode === LEFT_ARROW) {
+    man.vel.add(createVector(-1, 0));
+  } else if (keyCode === RIGHT_ARROW) {
+    man.vel.add(createVector(1, 0));
+  } else if (keyCode === 32) {
+    man.vel.add(createVector(0, -3));
+  }
+}
+
+function getRandomPos(ball_list, man) {
+  let pos = createVector(random(5, windowWidth - 5), random(5, windowHeight - 5));
+  let finish = false;
+  while(!finish) {
+    let check = false;
+    for (let ball of ball_list) {
+      if (ball.pos.dist(pos) < 10)
+        check = true;
+    }
+    if (man.pos.dist(pos) < 20) {
+      check = true;
+    }
+    if (check == false)
+      finish = true;
+  }
+  console.log(pos);
+  return pos;
+}
+
+var keys = {};
+window.addEventListener("keydown",
+    function(e){
+        keys[e.code] = true;
+        switch(e.code){
+            case "ArrowUp": case "ArrowDown": case "ArrowLeft": case "ArrowRight":
+            case "Space": e.preventDefault(); break;
+            default: break; // do not block other keys
+        }
+    },
+false);
+window.addEventListener('keyup',
+    function(e){
+        keys[e.code] = false;
+    },
+false);
