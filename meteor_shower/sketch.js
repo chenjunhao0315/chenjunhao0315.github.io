@@ -6,7 +6,7 @@ let img_width;
 let img_height;
 
 function preload() {
-	img = loadImage('https://raw.githubusercontent.com/chenjunhao0315/data_structure/main/star.jpg');
+	img = loadImage('https://raw.githubusercontent.com/chenjunhao0315/chenjunhao0315.github.io/meteor_shower/star.jpg');
 }
 
 function setup() {
