@@ -91,9 +91,9 @@ class fish {
     }
 
     canReproduceWith(fish, reproduction_rate) {
-        let isAdult = (fish.radius + this.radius > 16);
+        let isAdult = (fish.radius + this.radius > 12);
         let isSameGender = fish.sex === this.sex;
-        let isHealthy = (fish.health + this.health > 0.9);
+        let isHealthy = (fish.health + this.health > 0.6);
         //let isAge = (fish.age > fish.child && this.age > this.child);
         let isAge = true;
         let isCycle = (this.reproduceTime > this.reproduceCycle && fish.reproduceTime > fish.reproduceCycle);
@@ -151,6 +151,9 @@ class fish {
         this.applyForce(alwayFear);
         this.applyForce(steerPrey);
         this.applyForce(steerMate);
+        if (this.vel.dist(new Vector(0, 0)) < 0.1) {
+            this.vel = new Vector.random2D();
+        }
     }
 
     findMate(system, qlist, perceptionRadius) {
@@ -262,7 +265,7 @@ class fish {
             }
         }
 
-        if (closest != null && this.health > 0.5 && this.radius > closest.data.radius) {
+        if (closest != null && this.health > 0.2 && this.radius > closest.data.radius) {
             return this.seek(closest.data.pos);
         }
         return new Vector(0, 0);
@@ -288,7 +291,7 @@ class fish {
         for (let other of others) {
             const target = new Vector(other.x, other.y);
             const distance = this.pos.dist(target);
-            if (distance < 2 + this.radius && this.health < 0.9) {
+            if (distance < 2 + this.radius) {
                 system.deleteStuff(name, other.index);
                 this.health += nutrition;
                 this.radius += nutrition;

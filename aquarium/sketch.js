@@ -1,6 +1,6 @@
 let debug;
 
-let weather_data;
+// let weather_data;
 let preminute, presecond;
 
 let aquarium;
@@ -33,8 +33,8 @@ let gene_ctx;
 
 
 function preload() {
-    let url = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWB-0505FC6C-E0E7-4991-9FD4-1D01A8C4E39C&format=JSON&locationName=%E6%96%B0%E7%AB%B9";
-    weather_data = loadJSON(url);
+    // let url = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWB-0505FC6C-E0E7-4991-9FD4-1D01A8C4E39C&format=JSON&locationName=%E6%96%B0%E7%AB%B9";
+    // weather_data = loadJSON(url);
     //weather_data = loadJSON('assets/weather_data');
     //print(weather_data);
 }
@@ -83,9 +83,9 @@ function setup() {
     aquarium.addPopulation('PROVIDER', PROVIDER);
     aquarium.addAnimal('PROVIDER', 4);
     aquarium.addItem('BODY', [255, 255, 0], 1, false);
-    aquarium.addField('WIND', height);
-    aquarium.addField('WATER', 20);
-    aquarium.updateWeather(weather_data);
+    // aquarium.addField('WIND', height);
+    // aquarium.addField('WATER', 20);
+    // aquarium.updateWeather(weather_data);
 
     aquarium.addItem('CORAL_FOOD', [255, 0, 255], 1, false);
     aquarium.addPlant('CORAL', 'CORAL');
@@ -101,8 +101,8 @@ function setup() {
 
     //test_coral = new Coral(width / 2, height / 2, 2, 20, 30, color(236, 106, 85));
     
-    debug = createCheckbox();
-    showLog = createCheckbox();
+    debug = createCheckbox(' Show genetic information');
+    showLog = createCheckbox(' Show Trend');
 }
 
 function draw() {
@@ -114,9 +114,9 @@ function draw() {
     aquarium.updateQlist();
 
     aquarium.populationcontrol();
-    if (preminute != minute()) {
-        aquarium.environmentcontrol(weather_data);
-    }
+    // if (preminute != minute()) {
+    //     aquarium.environmentcontrol(weather_data);
+    // }
 
     aquarium.updatePlant();
     aquarium.showPlant();

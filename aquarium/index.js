@@ -43,8 +43,8 @@ aquarium_canvas.style.height = rect2.height + 'px';
 
 
 function preload() {
-    let url = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWB-0505FC6C-E0E7-4991-9FD4-1D01A8C4E39C&format=JSON&locationName=%E6%96%B0%E7%AB%B9";
-    weather_data = loadJSON(url);
+    // let url = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWB-0505FC6C-E0E7-4991-9FD4-1D01A8C4E39C&format=JSON&locationName=%E6%96%B0%E7%AB%B9";
+    // weather_data = loadJSON(url);
     //weather_data = loadJSON('assets/weather_data');
     //print(weather_data);
 }
